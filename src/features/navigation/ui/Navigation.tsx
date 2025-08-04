@@ -1,14 +1,9 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { toggleTheme as toggleThemeAction } from '../../../app/store/appSlice'
-import { useAppDispatch, useAppSelector } from '../../../app/store/hooks'
-import { selectTheme } from '../../../app/store/selectors'
-
-const menuItems = [
-  { name: 'Home', path: '/' },
-  { name: 'Data', path: '/data' },
-  { name: 'Settings', path: '/settings' }
-]
+import { toggleTheme as toggleThemeAction } from '@/app/store/appSlice'
+import { useAppDispatch, useAppSelector } from '@/app/store/hooks'
+import { selectTheme } from '@/app/store/selectors'
+import { routes } from '@/app/constants'
 
 export const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -38,13 +33,13 @@ export const Navigation = () => {
           {/* Desktop Navigation - Left side */}
           <div className="hidden md:block">
             <div className="flex items-baseline space-x-4">
-              {menuItems.map((item) => (
+              {routes.map((item) => (
                 <Link
-                  key={item.name}
+                  key={item.title}
                   to={item.path}
                   className="rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
-                  {item.name}
+                  {item.title}
                 </Link>
               ))}
             </div>
@@ -117,14 +112,14 @@ export const Navigation = () => {
       {/* Mobile menu */}
       <div className={`${isMenuOpen ? 'block' : 'hidden'} md:hidden`}>
         <div className="space-y-1 border-t border-gray-200 px-2 pb-3 pt-2 sm:px-3 dark:border-gray-700">
-          {menuItems.map((item) => (
+          {routes.map((item) => (
             <Link
-              key={item.name}
+              key={item.title}
               to={item.path}
               className="block rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
               onClick={closeMenu}
             >
-              {item.name}
+              {item.title}
             </Link>
           ))}
 

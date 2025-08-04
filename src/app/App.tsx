@@ -1,9 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { Navigation } from '../features/navigation'
-import { ThemeProvider } from './components/ThemeProvider'
-import { HomePage } from '../pages/HomePage'
-import { DataPage } from '../pages/DataPage'
-import { SettingsPage } from '../pages/SettingsPage'
+import { ThemeProvider } from './providers/ThemeProvider'
+import { routes } from './constants'
 
 export const App = () => {
   return (
@@ -17,9 +15,15 @@ export const App = () => {
           {/* Main content with top padding to account for fixed navigation */}
           <div className="pt-16">
             <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/data" element={<DataPage />} />
-              <Route path="/settings" element={<SettingsPage />} />
+              {routes.map((route) => {
+                return (
+                  <Route
+                    key={route.title}
+                    path={route.path}
+                    element={<route.element />}
+                  />
+                )
+              })}
             </Routes>
           </div>
         </div>
