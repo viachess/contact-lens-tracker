@@ -1,4 +1,4 @@
-import type { RootState } from './index'
+import type { RootState } from '@/app/store/types'
 
 export const selectApp = (state: RootState) => state.app
 export const selectIsLoading = (state: RootState) => state.app.isLoading

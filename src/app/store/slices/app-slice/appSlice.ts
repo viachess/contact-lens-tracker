@@ -35,4 +35,4 @@ const appSlice = createSlice({
 })
 
 export const { setLoading, setUser, toggleTheme } = appSlice.actions
-export default appSlice.reducer
+export const appSliceReducer = appSlice.reducer

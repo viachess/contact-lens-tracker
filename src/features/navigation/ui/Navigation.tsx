@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { toggleTheme as toggleThemeAction } from '@/app/store/appSlice'
+import { toggleTheme as toggleThemeAction } from '@/app/store/slices/app-slice/appSlice'
 import { useAppDispatch, useAppSelector } from '@/app/store/hooks'
-import { selectTheme } from '@/app/store/selectors'
+import { selectTheme } from '@/app/store/slices/app-slice/selectors'
 import { routes } from '@/app/constants'
 
 export const Navigation = () => {

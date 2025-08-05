@@ -6,7 +6,7 @@ export const routes: {
   path: string
   element: FC
 }[] = [
-  { title: 'Home', path: '/', element: HomePage },
-  { title: 'Data', path: '/data', element: DataPage },
-  { title: 'Settings', path: '/settings', element: SettingsPage }
+  { title: '🏠', path: '/', element: HomePage },
+  { title: 'Настройки', path: '/settings', element: SettingsPage },
+  { title: 'Данные', path: '/data', element: DataPage }
 ]

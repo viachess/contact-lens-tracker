@@ -1,11 +1,2 @@
-import { configureStore } from '@reduxjs/toolkit'
-import appSlice from './appSlice'
-
-export const store = configureStore({
-  reducer: {
-    app: appSlice
-  }
-})
-
-export type RootState = ReturnType<typeof store.getState>
-export type AppDispatch = typeof store.dispatch
+export { MODAL_ZINDEX } from './slices/modal-slice'
+export { MODAL_IDS } from './slices/modal-slice/modal-ids'

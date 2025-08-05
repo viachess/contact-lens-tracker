@@ -11,8 +11,6 @@ export const App = () => {
           className={`min-h-screen bg-[rgb(247,248,250)] text-gray-900 dark:bg-gray-900 dark:text-white`}
         >
           <Navigation />
-
-          {/* Main content with top padding to account for fixed navigation */}
           <div className="pt-16">
             <Routes>
               {routes.map((route) => {
