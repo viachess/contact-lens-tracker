@@ -18,3 +18,9 @@ export interface LensManagementState {
   isLoading: boolean
   error: string | null
 }
+
+export enum LensTypeByWearPeriodEnum {
+  Daily = 'Ежедневные',
+  TwoWeeks = 'Двухнедельные',
+  Monthly = 'Ежемесячные'
+}

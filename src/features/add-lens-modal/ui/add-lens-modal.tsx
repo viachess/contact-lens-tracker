@@ -1,7 +1,11 @@
 import { MODAL_IDS } from '@/app/store'
 import { ModalContainer } from '@/shared/ui/portal-modal'
 import { useState } from 'react'
-import { Lens } from '@/app/store/slices/lens-management-slice'
+import {
+  Lens,
+  LensTypeByWearPeriodEnum,
+  lensTypeToWearPeriodMap
+} from '@/app/store/slices/lens-management-slice'
 
 interface AddLensModalProps {
   onClose: () => void
@@ -45,23 +49,13 @@ export const AddLensModal = ({ onClose, onAdd }: AddLensModalProps) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
-  // Update usage period when wear period changes
-  const handleWearPeriodChange = (wearPeriod: string) => {
-    // FIXME: update wearPeriodDays instead of usagePeriodDays. usagePeriodDays reflect the number of days a lens was actually used
-    let usagePeriodDays = 1
-    switch (wearPeriod) {
-      case 'Ежедневные':
-        usagePeriodDays = 1
-        break
-      case 'Двухнедельные':
-        usagePeriodDays = 14
-        break
-      case 'Ежемесячные':
-        usagePeriodDays = 30
-        break
-    }
-    updateFormData('wearPeriodTitle', wearPeriod)
-    updateFormData('usagePeriodDays', usagePeriodDays)
+  const handleWearPeriodChange = (wearPeriodTitle: string) => {
+    const wearPeriodDays =
+      lensTypeToWearPeriodMap[
+        wearPeriodTitle as keyof typeof lensTypeToWearPeriodMap
+      ]
+    updateFormData('wearPeriodTitle', wearPeriodTitle)
+    updateFormData('wearPeriodDays', wearPeriodDays)
   }
 
   return (
@@ -173,9 +167,9 @@ export const AddLensModal = ({ onClose, onAdd }: AddLensModalProps) => {
                     onChange={(e) => handleWearPeriodChange(e.target.value)}
                     className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:px-4 sm:py-3 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                   >
-                    <option value="Ежедневные">Ежедневные</option>
-                    <option value="Двухнедельные">Двухнедельные</option>
-                    <option value="Ежемесячные">Ежемесячные</option>
+                    {Object.keys(lensTypeToWearPeriodMap).map((v) => {
+                      return <option value={v}>{v}</option>
+                    })}
                   </select>
                 </div>
 
