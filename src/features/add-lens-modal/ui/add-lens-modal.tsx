@@ -3,7 +3,6 @@ import { ModalContainer } from '@/shared/ui/portal-modal'
 import { useState } from 'react'
 import {
   Lens,
-  LensTypeByWearPeriodEnum,
   lensTypeToWearPeriodMap
 } from '@/app/store/slices/lens-management-slice'
 
@@ -168,7 +167,11 @@ export const AddLensModal = ({ onClose, onAdd }: AddLensModalProps) => {
                     className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:px-4 sm:py-3 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                   >
                     {Object.keys(lensTypeToWearPeriodMap).map((v) => {
-                      return <option value={v}>{v}</option>
+                      return (
+                        <option key={v} value={v}>
+                          {v}
+                        </option>
+                      )
                     })}
                   </select>
                 </div>

@@ -23,13 +23,17 @@
     "typecheck": "tsc --project tsconfig.json --noEmit"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.2.1",
     "@reduxjs/toolkit": "^2.8.2",
+    "@supabase/supabase-js": "^2.54.0",
     "classnames": "^2.5.1",
     "nanoid": "^5.1.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-hook-form": "^7.62.0",
     "react-redux": "^9.2.0",
-    "react-router-dom": "^7.7.1"
+    "react-router-dom": "^7.7.1",
+    "zod": "^4.0.15"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.6.3",

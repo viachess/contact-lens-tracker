@@ -1,30 +1,50 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { Navigation } from '../features/navigation'
 import { ThemeProvider } from './providers/ThemeProvider'
+import { SessionProvider } from './providers/SessionProvider'
+import { ProtectedRoute } from './providers/ProtectedRoute'
+import { HomePage, LoginPage, SignUpPage, ConfirmEmailPage } from '@/pages'
 import { routes } from './constants'
 
 export const App = () => {
   return (
     <Router>
       <ThemeProvider>
-        <div
-          className={`min-h-screen bg-[rgb(247,248,250)] text-gray-900 dark:bg-gray-900 dark:text-white`}
-        >
-          <Navigation />
-          <div className="pt-16">
-            <Routes>
-              {routes.map((route) => {
-                return (
-                  <Route
-                    key={route.title}
-                    path={route.path}
-                    element={<route.element />}
-                  />
-                )
-              })}
-            </Routes>
+        <SessionProvider>
+          <div
+            className={`min-h-screen bg-[rgb(247,248,250)] text-gray-900 dark:bg-gray-900 dark:text-white`}
+          >
+            <Navigation />
+            <div className="pt-16">
+              <Routes>
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/signup" element={<SignUpPage />} />
+                <Route path="/confirm-email" element={<ConfirmEmailPage />} />
+                <Route
+                  path="/"
+                  element={
+                    <ProtectedRoute>
+                      <HomePage />
+                    </ProtectedRoute>
+                  }
+                />
+                {routes.map((route) => {
+                  return (
+                    <Route
+                      key={route.title}
+                      path={route.path}
+                      element={
+                        <ProtectedRoute>
+                          <route.element />
+                        </ProtectedRoute>
+                      }
+                    />
+                  )
+                })}
+              </Routes>
+            </div>
           </div>
-        </div>
+        </SessionProvider>
       </ThemeProvider>
     </Router>
   )

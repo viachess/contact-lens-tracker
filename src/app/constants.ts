@@ -1,4 +1,4 @@
-import { HomePage, DataPage, SettingsPage } from '@/pages'
+import { DataPage, SettingsPage } from '@/pages'
 import { FC } from 'react'
 
 export const routes: {
@@ -6,7 +6,6 @@ export const routes: {
   path: string
   element: FC
 }[] = [
-  { title: '🏠', path: '/', element: HomePage },
-  { title: 'Настройки', path: '/settings', element: SettingsPage },
+  { title: 'Линзы', path: '/lenses', element: SettingsPage },
   { title: 'Данные', path: '/data', element: DataPage }
 ]

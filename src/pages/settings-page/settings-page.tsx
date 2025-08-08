@@ -69,6 +69,8 @@ export const SettingsPage = () => {
         return 'text-green-600 dark:text-green-400'
       case 'opened':
         return 'text-yellow-600 dark:text-yellow-400'
+      case 'taken-off':
+        return 'text-blue-600 dark:text-blue-400'
       case 'unopened':
         return 'text-gray-600 dark:text-gray-400'
       case 'expired':
@@ -84,6 +86,8 @@ export const SettingsPage = () => {
         return 'В использовании'
       case 'opened':
         return 'Открыты'
+      case 'taken-off':
+        return 'Сняты'
       case 'unopened':
         return 'Не открыты'
       case 'expired':
@@ -146,7 +150,7 @@ export const SettingsPage = () => {
                       lens.status !== 'unopened' && (
                         <div className="text-right">
                           <div className="mt-1 text-xs text-gray-500 dark:text-gray-500">
-                            Осталось дней: {remainingDays} д.
+                            Осталось дней: {remainingDays || 'N/A'} д.
                           </div>
                         </div>
                       )}

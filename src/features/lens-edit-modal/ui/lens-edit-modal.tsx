@@ -32,6 +32,8 @@ const getStatusColor = (status: string) => {
       return 'text-green-600 dark:text-green-400'
     case 'opened':
       return 'text-yellow-600 dark:text-yellow-400'
+    case 'taken-off':
+      return 'text-blue-600 dark:text-blue-400'
     case 'unopened':
       return 'text-gray-600 dark:text-gray-400'
     case 'expired':
@@ -47,6 +49,8 @@ const getStatusText = (status: string) => {
       return 'В использовании'
     case 'opened':
       return 'Открыты'
+    case 'taken-off':
+      return 'Сняты'
     case 'unopened':
       return 'Не открыты'
     case 'expired':
@@ -108,10 +112,7 @@ export const LensEditModal = ({
   const remainingDays = getRemainingDays(lens)
   const isExpired = isLensExpired(lens)
   const canSwap =
-    !isExpired &&
-    lens.status !== 'in-use' &&
-    lens.status !== 'unopened' &&
-    currentLens?.id !== lens.id
+    !isExpired && lens.status !== 'in-use' && currentLens?.id !== lens.id
 
   return (
     <ModalContainer name={MODAL_IDS.LENS_EDIT}>
@@ -148,7 +149,7 @@ export const LensEditModal = ({
               </button>
             </div>
 
-            {/* Action Buttons moved here */}
+            {/* Action Buttons */}
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:gap-4">
               {isEditing ? (
                 <>
@@ -384,7 +385,12 @@ export const LensEditModal = ({
                       value={editData?.status || ''}
                       onChange={(e) =>
                         setEditData((prev) =>
-                          prev ? { ...prev, status: e.target.value } : null
+                          prev
+                            ? {
+                                ...prev,
+                                status: e.target.value as Lens['status']
+                              }
+                            : null
                         )
                       }
                       className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:px-4 sm:py-3 dark:border-gray-600 dark:bg-gray-700 dark:text-white"

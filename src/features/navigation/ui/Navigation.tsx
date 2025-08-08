@@ -1,14 +1,17 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { toggleTheme as toggleThemeAction } from '@/app/store/slices/app-slice/appSlice'
-import { useAppDispatch, useAppSelector } from '@/app/store/hooks'
 import { selectTheme } from '@/app/store/slices/app-slice/selectors'
 import { routes } from '@/app/constants'
+import { useAppSelector, useAppDispatch } from '@/app/store/hooks'
+import { selectUser } from '@/app/store/slices/auth-slice/selectors'
+import { logout } from '@/app/store/slices/auth-slice/slice'
 
 export const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const theme = useAppSelector(selectTheme)
   const dispatch = useAppDispatch()
+  const user = useAppSelector(selectUser)
 
   const handleToggleTheme = () => {
     dispatch(toggleThemeAction())
@@ -30,8 +33,11 @@ export const Navigation = () => {
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          {/* Desktop Navigation - Left side */}
-          <div className="hidden md:block">
+          {/* Desktop Navigation - Left side with Logo */}
+          <div className="hidden md:flex items-center gap-6">
+            <Link to="/" className="text-xl font-bold hover:opacity-80">
+              Lens Tracker
+            </Link>
             <div className="flex items-baseline space-x-4">
               {routes.map((item) => (
                 <Link
@@ -45,12 +51,8 @@ export const Navigation = () => {
             </div>
           </div>
 
-          {/* Logo and Theme Toggle - Right side */}
+          {/* Right side controls */}
           <div className="flex items-center space-x-4">
-            <div className="shrink-0">
-              <h1 className="text-xl font-bold">Lens Tracker</h1>
-            </div>
-
             {/* Theme toggle button - Desktop */}
             <div className="hidden md:block">
               <button
@@ -63,6 +65,23 @@ export const Navigation = () => {
               >
                 {theme === 'dark' ? '☀️' : '🌙'}
               </button>
+            </div>
+            <div className="hidden md:block">
+              {user ? (
+                <button
+                  onClick={() => dispatch(logout())}
+                  className="inline-flex items-center rounded-md border px-3 py-2 text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  Выйти
+                </button>
+              ) : (
+                <Link
+                  to="/login"
+                  className="inline-flex items-center rounded-md border px-3 py-2 text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  Войти
+                </Link>
+              )}
             </div>
           </div>
 
@@ -130,6 +149,17 @@ export const Navigation = () => {
           >
             {theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode'}
           </button>
+          {user && (
+            <button
+              onClick={() => {
+                dispatch(logout())
+                closeMenu()
+              }}
+              className="block w-full rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
+              Выйти
+            </button>
+          )}
         </div>
       </div>
     </nav>
