@@ -20,15 +20,31 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   const req = event.request
+  const url = new URL(req.url)
+
+  // Only handle HTTP(S) GET requests; ignore others (e.g., chrome-extension:)
+  if (req.method !== 'GET' || (url.protocol !== 'http:' && url.protocol !== 'https:')) {
+    return
+  }
+
   event.respondWith(
     caches.match(req).then(
       (cached) =>
         cached ||
-        fetch(req).then((res) => {
-          const copy = res.clone()
-          caches.open(CACHE).then((cache) => cache.put(req, copy))
-          return res
-        })
+        fetch(req)
+          .then((res) => {
+            // Cache only successful, cacheable responses
+            const isCacheable = res && res.ok && (res.type === 'basic' || res.type === 'cors')
+            if (isCacheable) {
+              const copy = res.clone()
+              caches
+                .open(CACHE)
+                .then((cache) => cache.put(req, copy))
+                .catch(() => {})
+            }
+            return res
+          })
+          .catch(() => cached)
     )
   )
 })
