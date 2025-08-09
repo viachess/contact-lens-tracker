@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 export const LoginPage = () => {
   return (
     <div className="mx-auto max-w-md p-6">
-      <h2 className="mb-4 text-xl font-semibold">Sign in</h2>
+      <h1 className="mb-4 text-xl font-semibold">Вход</h1>
       <LoginForm />
       <div className="mt-4 text-sm">
         Нет аккаунта?{' '}

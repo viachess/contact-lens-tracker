@@ -7,7 +7,6 @@ import {
   selectAuthError,
   selectAuthStatus
 } from '@/app/store/slices/auth-slice/selectors'
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { isSupabaseConfigured } from '@/shared/lib/supabaseClient'
 
@@ -22,7 +21,6 @@ export const SignUpForm = () => {
   const dispatch = useAppDispatch()
   const status = useAppSelector(selectAuthStatus)
   const error = useAppSelector(selectAuthError)
-  const [info, setInfo] = useState<string | null>(null)
   const navigate = useNavigate()
 
   const {
@@ -35,7 +33,6 @@ export const SignUpForm = () => {
   })
 
   const onSubmit = async (values: FormValues) => {
-    setInfo(null)
     try {
       const res = await dispatch(
         signupWithEmail({ email: values.email, password: values.password })
@@ -43,8 +40,8 @@ export const SignUpForm = () => {
       // Regardless of whether Supabase returns a user or null (email confirmation on),
       // redirect to the confirmation page.
       navigate('/confirm-email')
-    } catch (_) {
-      setInfo(null)
+    } catch (error) {
+      console.error(error)
     }
   }
 
@@ -81,11 +78,6 @@ export const SignUpForm = () => {
       {error && (
         <div className="rounded-md border border-red-400 bg-red-50 p-3 text-sm text-red-700">
           {error}
-        </div>
-      )}
-      {info && (
-        <div className="rounded-md border border-green-400 bg-green-50 p-3 text-sm text-green-700">
-          {info}
         </div>
       )}
       <div className="flex gap-3">

@@ -5,12 +5,21 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as
   | string
   | undefined
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  // eslint-disable-next-line no-console
-  console.error(
-    'Supabase is not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your .env.'
-  )
-}
-
-export const supabase = createClient(supabaseUrl ?? '', supabaseAnonKey ?? '')
 export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey)
+
+let singletonClient: ReturnType<typeof createClient> | null = null
+
+export function getSupabaseClient() {
+  if (!isSupabaseConfigured) {
+    throw new Error(
+      'Supabase is not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your .env.'
+    )
+  }
+  if (!singletonClient) {
+    singletonClient = createClient(
+      supabaseUrl as string,
+      supabaseAnonKey as string
+    )
+  }
+  return singletonClient
+}

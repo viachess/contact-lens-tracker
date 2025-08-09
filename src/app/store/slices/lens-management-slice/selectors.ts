@@ -59,13 +59,17 @@ export const getRemainingHours = (lens: Lens | null): number | null => {
 }
 
 export const calculateTotalUsageMs = (lens: Lens): number => {
-  const accumulated = lens.accumulatedUsageMs ?? 0
-  const lastResumedAtMs = lens.lastResumedAt
+  const accumulatedRaw = lens.accumulatedUsageMs ?? 0
+  const accumulated = Number.isFinite(accumulatedRaw) ? accumulatedRaw : 0
+
+  const parsedMs = lens.lastResumedAt
     ? new Date(lens.lastResumedAt).getTime()
     : null
+  const lastResumedAtMs =
+    parsedMs !== null && Number.isFinite(parsedMs) ? parsedMs : null
   const now = Date.now()
   const additional =
-    lens.status === 'in-use' && lastResumedAtMs
+    lens.status === 'in-use' && lastResumedAtMs !== null
       ? Math.max(0, now - lastResumedAtMs)
       : 0
   return accumulated + additional

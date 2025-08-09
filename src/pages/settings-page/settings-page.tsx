@@ -41,7 +41,7 @@ export const SettingsPage = () => {
 
   const handleDelete = (lens: Lens) => {
     if (!user?.id) return
-    dispatch(deleteLensForUser({ id: lens.id }))
+    dispatch(deleteLensForUser({ userId: user.id, id: lens.id }))
     handleCloseModal()
   }
 
@@ -155,7 +155,7 @@ export const SettingsPage = () => {
                       lens.status !== 'unopened' && (
                         <div className="text-right">
                           <div className="mt-1 text-xs text-gray-500 dark:text-gray-500">
-                            Осталось дней: {remainingDays || 'N/A'} д.
+                            Осталось дней: {remainingDays ?? 'N/A'} д.
                           </div>
                         </div>
                       )}

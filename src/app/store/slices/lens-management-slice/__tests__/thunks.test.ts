@@ -19,7 +19,7 @@ const mockFrom = () => ({
   order: vi.fn().mockReturnThis()
 })
 
-vi.spyOn(supabaseClient, 'supabase', 'get').mockReturnValue({
+vi.spyOn(supabaseClient, 'getSupabaseClient').mockReturnValue({
   from: vi.fn().mockImplementation(() => mockFrom())
 } as any)
 

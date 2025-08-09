@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { supabase } from '@/shared/lib/supabaseClient'
+import { getSupabaseClient } from '@/shared/lib/supabaseClient'
 
 export interface AuthUser {
   id: string
@@ -23,6 +23,7 @@ export const initSession = createAsyncThunk<
   void,
   { rejectValue: string }
 >('auth/initSession', async (_, { rejectWithValue }) => {
+  const supabase = getSupabaseClient()
   const { data, error } = await supabase.auth.getSession()
   if (error) return rejectWithValue(error.message)
   const { session } = data
@@ -35,6 +36,7 @@ export const loginWithEmail = createAsyncThunk<
   { email: string; password: string },
   { rejectValue: string }
 >('auth/loginWithEmail', async ({ email, password }, { rejectWithValue }) => {
+  const supabase = getSupabaseClient()
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password
@@ -49,6 +51,7 @@ export const signupWithEmail = createAsyncThunk<
   { email: string; password: string },
   { rejectValue: string }
 >('auth/signupWithEmail', async ({ email, password }, { rejectWithValue }) => {
+  const supabase = getSupabaseClient()
   const { data, error } = await supabase.auth.signUp({ email, password })
   if (error) return rejectWithValue(error.message)
   const { user } = data
@@ -58,6 +61,7 @@ export const signupWithEmail = createAsyncThunk<
 export const logout = createAsyncThunk<true, void, { rejectValue: string }>(
   'auth/logout',
   async (_, { rejectWithValue }) => {
+    const supabase = getSupabaseClient()
     const { error } = await supabase.auth.signOut()
     if (error) return rejectWithValue(error.message)
     return true

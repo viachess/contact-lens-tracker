@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '@/app/store/hooks'
 import { initSession } from '@/app/store/slices/auth-slice'
-import { supabase } from '@/shared/lib/supabaseClient'
+import { getSupabaseClient } from '@/shared/lib/supabaseClient'
 import { selectUser } from '@/app/store/slices/auth-slice/selectors'
 import { fetchLensesForUser } from '@/app/store/slices/lens-management-slice/slice'
 
@@ -15,6 +15,7 @@ export const SessionProvider = ({
 
   useEffect(() => {
     dispatch(initSession())
+    const supabase = getSupabaseClient()
     const { data: subscription } = supabase.auth.onAuthStateChange(() => {
       dispatch(initSession())
     })

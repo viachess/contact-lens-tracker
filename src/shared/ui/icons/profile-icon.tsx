@@ -1,3 +1,4 @@
+import type { FC } from 'react'
 import { SvgBase } from './svg-base'
 
 interface ProfileIconProps {
@@ -6,7 +7,7 @@ interface ProfileIconProps {
   height?: number | string
 }
 
-export const ProfileIcon: React.FC<ProfileIconProps> = ({
+export const ProfileIcon: FC<ProfileIconProps> = ({
   className = '',
   width = 24,
   height = 24

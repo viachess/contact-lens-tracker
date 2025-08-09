@@ -401,6 +401,7 @@ export const LensEditModal = ({
                       <option value="unopened">Не открыты</option>
                       <option value="opened">Открыты</option>
                       <option value="in-use">В использовании</option>
+                      <option value="taken-off">Сняты</option>
                       <option value="expired">Истекли</option>
                     </select>
                   ) : (
@@ -411,9 +412,11 @@ export const LensEditModal = ({
                             ? 'bg-green-500'
                             : lens.status === 'opened'
                               ? 'bg-yellow-500'
-                              : lens.status === 'expired'
-                                ? 'bg-red-500'
-                                : 'bg-gray-500'
+                              : lens.status === 'taken-off'
+                                ? 'bg-blue-500'
+                                : lens.status === 'expired'
+                                  ? 'bg-red-500'
+                                  : 'bg-gray-500'
                         }`}
                       />
                       <span

@@ -1,7 +1,8 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { nanoid } from 'nanoid'
 import { Lens, LensManagementState } from './types'
-import { supabase } from '@/shared/lib/supabaseClient'
+import { getSupabaseClient } from '@/shared/lib/supabaseClient'
+import { RootState } from '@/app/store/types'
 
 const initialState: LensManagementState = {
   lenses: [],
@@ -48,6 +49,7 @@ export const fetchLensesForUser = createAsyncThunk<
   { userId: string },
   { rejectValue: string }
 >('lenses/fetchForUser', async ({ userId }, { rejectWithValue }) => {
+  const supabase = getSupabaseClient()
   const { data, error } = await supabase
     .from('lenses')
     .select('*')
@@ -97,6 +99,7 @@ export const addLensForUser = createAsyncThunk<
   { rejectValue: string }
 >('lenses/addForUser', async ({ userId, lens }, { rejectWithValue }) => {
   const payload = mapLensToInsert(userId, lens)
+  const supabase = getSupabaseClient()
   const { data, error } = await supabase
     .from('lenses')
     .insert(payload)
@@ -109,25 +112,34 @@ export const addLensForUser = createAsyncThunk<
 export const updateLensForUser = createAsyncThunk<
   Lens,
   { lens: Lens },
-  { rejectValue: string }
->('lenses/updateForUser', async ({ lens }, { rejectWithValue }) => {
+  { state: RootState; rejectValue: string }
+>('lenses/updateForUser', async ({ lens }, { getState, rejectWithValue }) => {
   const update = mapLensToUpdate(lens)
-  const { data, error } = await supabase
-    .from('lenses')
-    .update(update)
-    .eq('id', lens.id)
-    .select('*')
-    .single()
+  const supabase = getSupabaseClient()
+
+  const userId = getState()?.auth?.user?.id
+
+  let query = supabase.from('lenses').update(update).eq('id', lens.id)
+  if (userId) {
+    query = query.eq('user_id', userId)
+  }
+
+  const { data, error } = await query.select('*').single()
   if (error) return rejectWithValue(error.message)
   return mapRowToLens(data as LensRow)
 })
 
 export const deleteLensForUser = createAsyncThunk<
   { id: string },
-  { id: string },
+  { userId: string; id: string },
   { rejectValue: string }
->('lenses/deleteForUser', async ({ id }, { rejectWithValue }) => {
-  const { error } = await supabase.from('lenses').delete().eq('id', id)
+>('lenses/deleteForUser', async ({ userId, id }, { rejectWithValue }) => {
+  const supabase = getSupabaseClient()
+  const { error } = await supabase
+    .from('lenses')
+    .delete()
+    .eq('id', id)
+    .eq('user_id', userId)
   if (error) return rejectWithValue(error.message)
   return { id }
 })
@@ -139,6 +151,7 @@ export const swapCurrentLensForUser = createAsyncThunk<
 >(
   'lenses/swapCurrentForUser',
   async ({ userId, lensId }, { getState, rejectWithValue }) => {
+    const supabase = getSupabaseClient()
     const { currentLens } = getState().lensManagement
     const nowIso = new Date().toISOString()
     // Update previous current lens to opened
@@ -156,6 +169,7 @@ export const swapCurrentLensForUser = createAsyncThunk<
         .from('lenses')
         .update(prevUpdate)
         .eq('id', currentLens.id)
+        .eq('user_id', userId)
         .select('*')
         .single()
       if (prevErr) return rejectWithValue(prevErr.message)
@@ -170,6 +184,7 @@ export const swapCurrentLensForUser = createAsyncThunk<
         last_resumed_at: nowIso
       })
       .eq('id', lensId)
+      .eq('user_id', userId)
       .select('*')
       .single()
     if (error) return rejectWithValue(error.message)
@@ -187,6 +202,7 @@ export const takeOffCurrentLensForUser = createAsyncThunk<
 >(
   'lenses/takeOffCurrentForUser',
   async ({ userId }, { getState, rejectWithValue }) => {
+    const supabase = getSupabaseClient()
     const { currentLens } = getState().lensManagement
     if (!currentLens) return rejectWithValue('No current lens in use') as any
     const now = Date.now()
@@ -205,6 +221,7 @@ export const takeOffCurrentLensForUser = createAsyncThunk<
         user_id: userId
       })
       .eq('id', currentLens.id)
+      .eq('user_id', userId)
       .select('*')
       .single()
     if (error) return rejectWithValue(error.message)
@@ -219,6 +236,7 @@ export const resumeLensForUser = createAsyncThunk<
 >(
   'lenses/resumeForUser',
   async ({ userId, lensId }, { getState, rejectWithValue }) => {
+    const supabase = getSupabaseClient()
     const { currentLens } = getState().lensManagement
     const nowIso = new Date().toISOString()
     let updatedPrev: Lens | undefined
@@ -227,6 +245,7 @@ export const resumeLensForUser = createAsyncThunk<
         .from('lenses')
         .update({ status: 'opened', last_resumed_at: null, user_id: userId })
         .eq('id', currentLens.id)
+        .eq('user_id', userId)
         .select('*')
         .single()
       if (prevErr) return rejectWithValue(prevErr.message)
@@ -241,6 +260,7 @@ export const resumeLensForUser = createAsyncThunk<
         user_id: userId
       })
       .eq('id', lensId)
+      .eq('user_id', userId)
       .select('*')
       .single()
     if (error) return rejectWithValue(error.message)
@@ -257,6 +277,7 @@ export const discardCurrentLensForUser = createAsyncThunk<
 >(
   'lenses/discardCurrentForUser',
   async ({ userId }, { getState, rejectWithValue }) => {
+    const supabase = getSupabaseClient()
     const { currentLens } = getState().lensManagement
     if (!currentLens)
       return rejectWithValue('No current lens to discard') as any
@@ -284,6 +305,7 @@ export const discardCurrentLensForUser = createAsyncThunk<
         user_id: userId
       })
       .eq('id', currentLens.id)
+      .eq('user_id', userId)
       .select('*')
       .single()
     if (error) return rejectWithValue(error.message)
