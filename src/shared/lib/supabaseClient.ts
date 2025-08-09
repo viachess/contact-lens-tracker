@@ -18,7 +18,15 @@ export function getSupabaseClient() {
   if (!singletonClient) {
     singletonClient = createClient(
       supabaseUrl as string,
-      supabaseAnonKey as string
+      supabaseAnonKey as string,
+      {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true,
+          storageKey: 'lens-tracker-auth'
+        }
+      }
     )
   }
   return singletonClient

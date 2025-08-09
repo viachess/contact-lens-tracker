@@ -98,8 +98,16 @@ export const addLensForUser = createAsyncThunk<
   { userId: string; lens: Omit<Lens, 'id'> },
   { rejectValue: string }
 >('lenses/addForUser', async ({ userId, lens }, { rejectWithValue }) => {
-  const payload = mapLensToInsert(userId, lens)
+  // Ensure we have an authenticated session before trying to insert
   const supabase = getSupabaseClient()
+  const { data: sessionData } = await supabase.auth.getSession()
+  if (
+    !sessionData.session?.user?.id ||
+    sessionData.session.user.id !== userId
+  ) {
+    return rejectWithValue('Not authenticated')
+  }
+  const payload = mapLensToInsert(userId, lens)
   const { data, error } = await supabase
     .from('lenses')
     .insert(payload)
