@@ -1,5 +1,5 @@
 // basic service worker for offline cache
-const CACHE = 'lens-tracker-cache-v1'
+const CACHE = 'lens-tracker-cache-v2'
 const ASSETS = ['/', '/index.html', '/favicon.svg']
 
 self.addEventListener('install', (event) => {
@@ -28,24 +28,27 @@ self.addEventListener('fetch', (event) => {
   }
 
   event.respondWith(
-    caches.match(req).then(
-      (cached) =>
-        cached ||
-        fetch(req)
-          .then((res) => {
-            // Cache only successful, cacheable responses
-            const isCacheable = res && res.ok && (res.type === 'basic' || res.type === 'cors')
-            if (isCacheable) {
-              const copy = res.clone()
-              caches
-                .open(CACHE)
-                .then((cache) => cache.put(req, copy))
-                .catch(() => {})
-            }
-            return res
-          })
-          .catch(() => cached)
-    )
+    caches.match(req).then((cached) => {
+      if (cached) return cached
+      return fetch(req).then((res) => {
+        const isCacheable =
+          res &&
+          res.ok &&
+          (res.type === 'basic' || res.type === 'cors') &&
+          res.headers.get('content-type')?.includes('application/javascript') === false
+            ? true
+            : true
+        // Only cache GET requests for assets (js/css/image), not HTML navigations
+        const isNavigationHtml = res.headers
+          .get('content-type')
+          ?.includes('text/html') && req.mode === 'navigate'
+        if (isCacheable && !isNavigationHtml) {
+          const copy = res.clone()
+          caches.open(CACHE).then((cache) => cache.put(req, copy)).catch(() => {})
+        }
+        return res
+      })
+    })
   )
 })
 

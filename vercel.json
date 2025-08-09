@@ -1,6 +1,7 @@
 {
-  "rewrites": [
-    { "source": "/sw.js", "destination": "/sw.js" },
-    { "source": "/(.*)", "destination": "/" }
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/sw.js", "dest": "/sw.js" },
+    { "src": "/.*", "dest": "/" }
   ]
 }

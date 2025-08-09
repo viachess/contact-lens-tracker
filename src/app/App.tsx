@@ -1,4 +1,4 @@
-import { HashRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { Navigation } from '../features/navigation'
 import { ThemeProvider } from './providers/ThemeProvider'
 import { SessionProvider } from './providers/SessionProvider'
