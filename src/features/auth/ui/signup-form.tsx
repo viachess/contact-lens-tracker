@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useAppDispatch, useAppSelector } from '@/app/store/hooks'
-import { signupWithEmail } from '@/app/store/slices/auth-slice/slice'
+import { signupWithEmail } from '@/app/store/slices/auth-slice'
 import {
   selectAuthError,
   selectAuthStatus

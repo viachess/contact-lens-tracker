@@ -1,10 +1,10 @@
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/app/store/hooks'
-import { loginWithEmail } from '@/app/store/slices/auth-slice/slice'
+import { loginWithEmail } from '@/app/store/slices/auth-slice'
 import {
   selectAuthStatus,
   selectAuthError

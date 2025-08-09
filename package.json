@@ -1,17 +1,17 @@
 {
-  "name": "reactjs-vite-tailwindcss-boilerplate",
-  "description": "This is a boilerplate build with Vite, React 18, TypeScript, Vitest, Testing Library, TailwindCSS 3, Eslint and Prettier.",
+  "name": "contact-lens-tracker",
+  "description": "An application for tracking contact lens usage that warns you if the lenses had been used for too long",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "author": {
-    "name": "João Paulo Moraes",
-    "email": "joaopaulomoraes@outlook.com",
-    "url": "https://github.com/joaopaulomoraes"
+    "name": "Viacheslav S.",
+    "email": "mr.viacheslav@yandex.ru",
+    "url": "https://github.com/viachess"
   },
   "bugs": {
-    "url": "https://github.com/joaopaulomoraes/reactjs-vite-tailwindcss-boilerplate/issues",
-    "email": "joaopaulomoraes@outlook.com"
+    "url": "https://github.com/viachess/contact-lens-tracker/issues",
+    "email": "mr.viacheslav@yandex.ru"
   },
   "scripts": {
     "dev": "vite",
@@ -36,7 +36,7 @@
     "zod": "^4.0.15"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/jest-dom": "^6.6.4",
     "@testing-library/react": "^14.3.1",
     "@types/node": "^20.17.46",
     "@types/react": "^18.3.21",

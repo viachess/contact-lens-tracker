@@ -4,7 +4,8 @@ import { ModalContainer } from '@/shared/ui/portal-modal'
 import { useState } from 'react'
 import { Lens } from '@/app/store/slices/lens-management-slice'
 import { useAppDispatch, useAppSelector } from '@/app/store/hooks'
-import { swapCurrentLens } from '@/app/store/slices/lens-management-slice'
+import { swapCurrentLensForUser } from '@/app/store/slices/lens-management-slice'
+import { selectUser } from '@/app/store/slices/auth-slice/selectors'
 import {
   isLensExpired,
   getRemainingDays,
@@ -70,6 +71,7 @@ export const LensEditModal = ({
   const currentLens = useAppSelector(
     (state) => state.lensManagement.currentLens
   )
+  const user = useAppSelector(selectUser)
   const [isEditing, setIsEditing] = useState(false)
   const [editData, setEditData] = useState<Lens | null>(null)
 
@@ -98,7 +100,8 @@ export const LensEditModal = ({
   }
 
   const handleSwapLens = () => {
-    dispatch(swapCurrentLens(lens.id))
+    if (!user?.id) return
+    dispatch(swapCurrentLensForUser({ userId: user.id, lensId: lens.id }))
     onClose()
   }
 

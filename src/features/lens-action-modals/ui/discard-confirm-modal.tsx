@@ -2,16 +2,20 @@
 
 import { ModalContainer } from '@/shared/ui/portal-modal'
 import { MODAL_IDS } from '@/app/store'
-import { useAppDispatch } from '@/app/store/hooks'
+import { useAppDispatch, useAppSelector } from '@/app/store/hooks'
 import { closeModal } from '@/app/store/slices/modal-slice/slice'
-import { discardCurrentLens } from '@/app/store/slices/lens-management-slice'
+import { discardCurrentLensForUser } from '@/app/store/slices/lens-management-slice/slice'
+import { selectUser } from '@/app/store/slices/auth-slice/selectors'
 
 export const DiscardConfirmModal = () => {
   const dispatch = useAppDispatch()
+  const user = useAppSelector(selectUser)
 
   const handleCancel = () => dispatch(closeModal())
   const handleConfirm = () => {
-    dispatch(discardCurrentLens())
+    if (user?.id) {
+      dispatch(discardCurrentLensForUser({ userId: user.id }))
+    }
     dispatch(closeModal())
   }
 

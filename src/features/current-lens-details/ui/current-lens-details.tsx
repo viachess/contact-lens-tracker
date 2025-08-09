@@ -18,7 +18,7 @@ import {
 } from '@/features/lens-action-modals'
 import { ContactLensIcon, StopSignIcon } from '@/shared/ui/icons'
 import { ProgressBar } from '@/shared/ui/progress-bar'
-import { useMemo } from 'react'
+import { Link } from 'react-router-dom'
 
 export const CurrentLensDetails = () => {
   const dispatch = useAppDispatch()
@@ -26,15 +26,15 @@ export const CurrentLensDetails = () => {
 
   if (!currentLens) {
     return (
-      <>
-        <div>Сейчас не надеты линзы</div>
-        <div className="flex items-center gap-2">
-          <p className="text-gray-500 dark:text-gray-400">
-            Добавьте линзы в настройках
-          </p>
-          <ContactLensIcon className="size-9 text-gray-400 dark:text-gray-500" />
-        </div>
-      </>
+      <div className="flex flex-col gap-3">
+        <div className="text-lg font-medium">Сейчас не надеты линзы</div>
+        <Link
+          to="/lenses"
+          className="inline-flex self-start items-center gap-2 px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 dark:bg-blue-400 dark:hover:bg-blue-300 transition-colors font-medium shadow w-auto max-w-max"
+        >
+          К списку линз
+        </Link>
+      </div>
     )
   }
 
@@ -96,7 +96,7 @@ export const CurrentLensDetails = () => {
 
   // When remaining time goes under 24 hours, append hours left to the progress bar end label
   const msPerHour = 60 * 60 * 1000
-  const remainingHoursForLabel = useMemo(() => {
+  const remainingHoursForLabel = (() => {
     if (isExpired) return null
     if (wearPeriodDays === 1) {
       return getRemainingHours(currentLens)
@@ -107,14 +107,8 @@ export const CurrentLensDetails = () => {
       return Math.ceil(remainingTotalMs / msPerHour)
     }
     return null
-  }, [
-    isExpired,
-    wearPeriodDays,
-    currentLens,
-    msPerDay,
-    totalUsageMs,
-    msPerHour
-  ])
+  })()
+
   const endProgressLabel =
     remainingHoursForLabel != null
       ? `${endLabelDate} (${remainingHoursForLabel}ч.)`

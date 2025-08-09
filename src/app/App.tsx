@@ -3,7 +3,13 @@ import { Navigation } from '../features/navigation'
 import { ThemeProvider } from './providers/ThemeProvider'
 import { SessionProvider } from './providers/SessionProvider'
 import { ProtectedRoute } from './providers/ProtectedRoute'
-import { HomePage, LoginPage, SignUpPage, ConfirmEmailPage } from '@/pages'
+import {
+  HomePage,
+  LoginPage,
+  SignUpPage,
+  ConfirmEmailPage,
+  ProfilePage
+} from '@/pages'
 import { routes } from './constants'
 
 export const App = () => {
@@ -25,6 +31,14 @@ export const App = () => {
                   element={
                     <ProtectedRoute>
                       <HomePage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRoute>
+                      <ProfilePage />
                     </ProtectedRoute>
                   }
                 />

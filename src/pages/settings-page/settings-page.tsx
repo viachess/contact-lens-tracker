@@ -5,11 +5,12 @@ import { useAppDispatch, useAppSelector } from '@/app/store/hooks'
 import { MODAL_IDS } from '@/app/store'
 import {
   selectAllLenses,
-  addLens,
-  updateLens,
-  deleteLens,
+  addLensForUser,
+  updateLensForUser,
+  deleteLensForUser,
   Lens
 } from '@/app/store/slices/lens-management-slice'
+import { selectUser } from '@/app/store/slices/auth-slice/selectors'
 import {
   getRemainingDays,
   parseDate
@@ -19,6 +20,7 @@ import { useState } from 'react'
 export const SettingsPage = () => {
   const dispatch = useAppDispatch()
   const lenses = useAppSelector(selectAllLenses)
+  const user = useAppSelector(selectUser)
   const [selectedLens, setSelectedLens] = useState<Lens | null>(null)
 
   const handleLensClick = (lens: Lens) => {
@@ -32,12 +34,14 @@ export const SettingsPage = () => {
   }
 
   const handleEdit = (lens: Lens) => {
-    dispatch(updateLens(lens))
+    if (!user?.id) return
+    dispatch(updateLensForUser({ lens }))
     handleCloseModal()
   }
 
   const handleDelete = (lens: Lens) => {
-    dispatch(deleteLens(lens.id))
+    if (!user?.id) return
+    dispatch(deleteLensForUser({ id: lens.id }))
     handleCloseModal()
   }
 
@@ -51,7 +55,8 @@ export const SettingsPage = () => {
   }
 
   const handleAdd = (lensData: Omit<Lens, 'id'>) => {
-    dispatch(addLens(lensData))
+    if (!user?.id) return
+    dispatch(addLensForUser({ userId: user.id, lens: lensData }))
     console.log('Add lens:', lensData)
   }
 

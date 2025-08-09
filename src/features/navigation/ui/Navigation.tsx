@@ -5,7 +5,8 @@ import { selectTheme } from '@/app/store/slices/app-slice/selectors'
 import { routes } from '@/app/constants'
 import { useAppSelector, useAppDispatch } from '@/app/store/hooks'
 import { selectUser } from '@/app/store/slices/auth-slice/selectors'
-import { logout } from '@/app/store/slices/auth-slice/slice'
+import { logout } from '@/app/store/slices/auth-slice'
+import { ProfileIcon } from '@/shared/ui/icons'
 
 export const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -38,17 +39,19 @@ export const Navigation = () => {
             <Link to="/" className="text-xl font-bold hover:opacity-80">
               Lens Tracker
             </Link>
-            <div className="flex items-baseline space-x-4">
-              {routes.map((item) => (
-                <Link
-                  key={item.title}
-                  to={item.path}
-                  className="rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
-                >
-                  {item.title}
-                </Link>
-              ))}
-            </div>
+            {user && (
+              <div className="flex items-baseline space-x-4">
+                {routes.map((item) => (
+                  <Link
+                    key={item.title}
+                    to={item.path}
+                    className="rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    {item.title}
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Right side controls */}
@@ -66,6 +69,17 @@ export const Navigation = () => {
                 {theme === 'dark' ? '☀️' : '🌙'}
               </button>
             </div>
+            {/* Profile button - Desktop (left of Login/Logout) */}
+            {user && (
+              <div className="hidden md:block">
+                <Link
+                  to="/profile"
+                  className="inline-flex items-center rounded-md border px-3 py-2 text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  <ProfileIcon className="size-5 dark:text-gray-300 dark:fill-gray-300" />
+                </Link>
+              </div>
+            )}
             <div className="hidden md:block">
               {user ? (
                 <button
@@ -131,16 +145,17 @@ export const Navigation = () => {
       {/* Mobile menu */}
       <div className={`${isMenuOpen ? 'block' : 'hidden'} md:hidden`}>
         <div className="space-y-1 border-t border-gray-200 px-2 pb-3 pt-2 sm:px-3 dark:border-gray-700">
-          {routes.map((item) => (
-            <Link
-              key={item.title}
-              to={item.path}
-              className="block rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
-              onClick={closeMenu}
-            >
-              {item.title}
-            </Link>
-          ))}
+          {user &&
+            routes.map((item) => (
+              <Link
+                key={item.title}
+                to={item.path}
+                className="block rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+                onClick={closeMenu}
+              >
+                {item.title}
+              </Link>
+            ))}
 
           {/* Theme toggle button - Mobile */}
           <button
@@ -159,6 +174,15 @@ export const Navigation = () => {
             >
               Выйти
             </button>
+          )}
+          {user && (
+            <Link
+              to="/profile"
+              onClick={closeMenu}
+              className="block rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
+              <ProfileIcon className="size-5 dark:text-gray-300" />
+            </Link>
           )}
         </div>
       </div>

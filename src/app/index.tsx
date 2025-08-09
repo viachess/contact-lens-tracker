@@ -12,3 +12,15 @@ root.render(
     <App />
   </Provider>
 )
+
+// Register service worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/src/sw.ts')
+  })
+}
+
+// Ask for Notification permission (basic hook; production should gate by user opt-in)
+if ('Notification' in window && Notification.permission === 'default') {
+  Notification.requestPermission()
+}
