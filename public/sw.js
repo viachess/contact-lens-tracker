@@ -27,27 +27,35 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
+  // Bypass cross-origin requests entirely (e.g., Supabase API). Let the network handle them.
+  if (url.origin !== self.location.origin) {
+    return
+  }
+
   event.respondWith(
     caches.match(req).then((cached) => {
-      if (cached) return cached
-      return fetch(req).then((res) => {
-        const isCacheable =
+      // Network-first for navigation requests (HTML documents)
+      if (req.mode === 'navigate') {
+        return fetch(req).catch(() => cached || caches.match('/'))
+      }
+
+      // For same-origin static assets, prefer cached then revalidate in background
+      const fetchAndMaybeCache = fetch(req).then((res) => {
+        const destination = req.destination // 'script' | 'style' | 'image' | 'font' | 'document' | 'fetch' ...
+        const shouldCache =
           res &&
           res.ok &&
           (res.type === 'basic' || res.type === 'cors') &&
-          res.headers.get('content-type')?.includes('application/javascript') === false
-            ? true
-            : true
-        // Only cache GET requests for assets (js/css/image), not HTML navigations
-        const isNavigationHtml = res.headers
-          .get('content-type')
-          ?.includes('text/html') && req.mode === 'navigate'
-        if (isCacheable && !isNavigationHtml) {
+          ['script', 'style', 'image', 'font'].includes(destination)
+
+        if (shouldCache) {
           const copy = res.clone()
           caches.open(CACHE).then((cache) => cache.put(req, copy)).catch(() => {})
         }
         return res
       })
+
+      return cached || fetchAndMaybeCache
     })
   )
 })
