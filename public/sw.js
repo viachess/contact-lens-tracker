@@ -61,3 +61,35 @@ self.addEventListener('fetch', (event) => {
 })
 
 
+// Push notifications handler
+self.addEventListener('push', (event) => {
+  const data = (() => {
+    try {
+      return event.data ? event.data.json() : { title: 'Reminder', body: 'Update your lens status' }
+    } catch {
+      return { title: 'Reminder', body: 'Update your lens status' }
+    }
+  })()
+  event.waitUntil(
+    self.registration.showNotification(data.title || 'Reminder', {
+      body: data.body || 'Update your lens status',
+      icon: '/icons/icon-192x192.png',
+      badge: '/icons/icon-192x192.png',
+      tag: 'lens-reminder'
+    })
+  )
+})
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close()
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      for (const client of clientList) {
+        if ('focus' in client) return client.focus()
+      }
+      if (clients.openWindow) return clients.openWindow('/')
+    })
+  )
+})
+
+

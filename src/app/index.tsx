@@ -36,7 +36,4 @@ if ('serviceWorker' in navigator) {
   }
 }
 
-// Ask for Notification permission (basic hook; production should gate by user opt-in)
-if ('Notification' in window && Notification.permission === 'default') {
-  Notification.requestPermission()
-}
+// Do not auto-request here; PushProvider handles permissions & subscription
