@@ -19,7 +19,7 @@ export const AddLensModal = ({ onClose, onAdd }: AddLensModalProps) => {
     brand: '',
     wearPeriodTitle: 'Ежедневные',
     wearPeriodDays: 1,
-    usagePeriodDays: 1,
+    usagePeriodDays: 0,
     discardDate: null,
     status: 'unopened',
     sphere: '',
@@ -182,15 +182,21 @@ export const AddLensModal = ({ onClose, onAdd }: AddLensModalProps) => {
                   </label>
                   <input
                     type="number"
-                    value={formData.usagePeriodDays}
-                    onChange={(e) =>
+                    value={formData.usagePeriodDays ?? 0}
+                    onChange={(e) => {
+                      const v = e.target.value
+                      if (v === '') {
+                        updateFormData('usagePeriodDays', 0)
+                        return
+                      }
+                      const parsed = Number(v)
                       updateFormData(
                         'usagePeriodDays',
-                        parseInt(e.target.value)
+                        Number.isFinite(parsed) ? Math.max(0, parsed) : 0
                       )
-                    }
+                    }}
                     className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:px-4 sm:py-3 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                    min="1"
+                    min="0"
                     max="365"
                   />
                 </div>

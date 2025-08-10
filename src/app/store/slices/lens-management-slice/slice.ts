@@ -183,12 +183,21 @@ export const swapCurrentLensForUser = createAsyncThunk<
       if (prevErr) return rejectWithValue(prevErr.message)
       updatedPrev = mapRowToLens(prevData as LensRow)
     }
-    // Set new current lens to in-use
+    // Preserve opened_date if it already exists; otherwise set it now
+    const { data: existingData, error: existingErr } = await supabase
+      .from('lenses')
+      .select('*')
+      .eq('id', lensId)
+      .eq('user_id', userId)
+      .single()
+    if (existingErr) return rejectWithValue(existingErr.message)
+    const existingRow = existingData as LensRow
+    const openedDateToSet = existingRow?.opened_date ?? nowIso
     const { data, error } = await supabase
       .from('lenses')
       .update({
         status: 'in-use',
-        opened_date: nowIso,
+        opened_date: openedDateToSet,
         last_resumed_at: nowIso
       })
       .eq('id', lensId)
@@ -246,6 +255,71 @@ export const resumeLensForUser = createAsyncThunk<
   async ({ userId, lensId }, { getState, rejectWithValue }) => {
     const supabase = getSupabaseClient()
     const { currentLens } = getState().lensManagement
+    // Enforce daily/multi-day rules before switching current lens
+    // Enforce daily lockout: if resuming a daily lens on a new local day,
+    // mark it expired and reject resume
+    const existing = getState().lensManagement.lenses.find(
+      (l) => l.id === lensId
+    )
+    // Enforce multi-day exhaustion both by calendar days since opened and by accumulated usage
+    if (existing && (existing.wearPeriodDays ?? 0) > 1) {
+      const msPerDay = 24 * 60 * 60 * 1000
+      const now = new Date()
+      const accumulated = existing.accumulatedUsageMs ?? 0
+      const wearDays = existing.wearPeriodDays ?? 0
+
+      // Check calendar days since openedDate
+      if (existing.openedDate) {
+        const opened = new Date(existing.openedDate)
+        const toLocalStartOfDay = (d: Date) =>
+          new Date(d.getFullYear(), d.getMonth(), d.getDate())
+        const daysElapsed = Math.floor(
+          (toLocalStartOfDay(now).getTime() -
+            toLocalStartOfDay(opened).getTime()) /
+            msPerDay
+        )
+        if (daysElapsed >= wearDays) {
+          const { error: expErr } = await supabase
+            .from('lenses')
+            .update({ status: 'expired', user_id: userId })
+            .eq('id', lensId)
+            .eq('user_id', userId)
+          if (expErr) return rejectWithValue(expErr.message)
+          return rejectWithValue('Wear period exceeded; cannot resume')
+        }
+      }
+
+      // Fallback: accumulated usage in ms exceeds wear period days
+      if (accumulated >= wearDays * msPerDay) {
+        const { error: expErr } = await supabase
+          .from('lenses')
+          .update({ status: 'expired', user_id: userId })
+          .eq('id', lensId)
+          .eq('user_id', userId)
+        if (expErr) return rejectWithValue(expErr.message)
+        return rejectWithValue('Wear period exceeded; cannot resume')
+      }
+    }
+    if (existing && existing.wearPeriodDays === 1 && existing.openedDate) {
+      const opened = new Date(existing.openedDate)
+      const now = new Date()
+      const isSameDay =
+        opened.getFullYear() === now.getFullYear() &&
+        opened.getMonth() === now.getMonth() &&
+        opened.getDate() === now.getDate()
+      if (!isSameDay) {
+        const { data: expiredData, error: expiredErr } = await supabase
+          .from('lenses')
+          .update({ status: 'expired', user_id: userId })
+          .eq('id', lensId)
+          .eq('user_id', userId)
+          .select('*')
+          .single()
+        if (expiredErr) return rejectWithValue(expiredErr.message)
+        const updatedExpired = mapRowToLens(expiredData as LensRow)
+        return rejectWithValue('Daily lens expired; cannot resume')
+      }
+    }
     const nowIso = new Date().toISOString()
     let updatedPrev: Lens | undefined
     if (currentLens && currentLens.id !== lensId) {
@@ -259,11 +333,22 @@ export const resumeLensForUser = createAsyncThunk<
       if (prevErr) return rejectWithValue(prevErr.message)
       updatedPrev = mapRowToLens(prevData as LensRow)
     }
+    // Preserve opened_date if already set in DB; otherwise assign now
+    const { data: existingData, error: existingErr } = await supabase
+      .from('lenses')
+      .select('opened_date')
+      .eq('id', lensId)
+      .eq('user_id', userId)
+      .single()
+    if (existingErr) return rejectWithValue(existingErr.message)
+    const existingRow = existingData as Partial<LensRow> | null
+    const openedDateToSet = existingRow?.opened_date ?? nowIso
+
     const { data, error } = await supabase
       .from('lenses')
       .update({
         status: 'in-use',
-        opened_date: nowIso,
+        opened_date: openedDateToSet,
         last_resumed_at: nowIso,
         user_id: userId
       })
