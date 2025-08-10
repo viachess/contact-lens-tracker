@@ -1,8 +1,8 @@
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useRef } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/app/store/hooks'
 import { loginWithEmail } from '@/app/store/slices/auth-slice'
 import {
@@ -23,12 +23,26 @@ export const LoginForm = () => {
   const status = useAppSelector(selectAuthStatus)
   const error = useAppSelector(selectAuthError)
   const navigate = useNavigate()
+  const location = useLocation()
+
+  const hasRedirectedRef = useRef(false)
 
   useEffect(() => {
-    if (status === 'authenticated') {
-      navigate('/')
+    if (status === 'authenticated' && !hasRedirectedRef.current) {
+      const from = (location.state as { from?: { pathname?: string } } | null)
+        ?.from
+      let to = from?.pathname
+      // Fallback to ?redirect query param
+      if (!to) {
+        const params = new URLSearchParams(location.search)
+        const redirect = params.get('redirect')
+        if (redirect) to = redirect
+      }
+      to = to || '/'
+      hasRedirectedRef.current = true
+      navigate(to, { replace: true })
     }
-  }, [status, navigate])
+  }, [status, navigate, location.state])
 
   const {
     register,

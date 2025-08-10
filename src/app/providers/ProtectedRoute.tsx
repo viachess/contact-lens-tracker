@@ -15,12 +15,20 @@ export const ProtectedRoute = ({
   const status = useAppSelector(selectAuthStatus)
   const location = useLocation()
 
-  if (status === 'authenticating') {
+  if (status === 'authenticating' || status === 'idle') {
     return <div className="p-6 text-sm text-gray-500">Loading...</div>
   }
 
   if (!user) {
-    return <Navigate to="/login" replace state={{ from: location }} />
+    const fullPath = `${location.pathname}${location.search}${location.hash}`
+    const redirectParam = encodeURIComponent(fullPath)
+    return (
+      <Navigate
+        to={`/login?redirect=${redirectParam}`}
+        replace
+        state={{ from: location }}
+      />
+    )
   }
 
   return children

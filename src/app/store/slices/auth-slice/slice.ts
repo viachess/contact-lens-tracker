@@ -14,7 +14,7 @@ interface AuthState {
 
 const initialState: AuthState = {
   user: null,
-  status: 'idle',
+  status: 'authenticating',
   error: null
 }
 
