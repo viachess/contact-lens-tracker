@@ -15,7 +15,7 @@ export const ProtectedRoute = ({
   const status = useAppSelector(selectAuthStatus)
   const location = useLocation()
 
-  if (status === 'authenticating' || status === 'idle') {
+  if (status === 'authenticating') {
     return <div className="p-6 text-sm text-gray-500">Loading...</div>
   }
 

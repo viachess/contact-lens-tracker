@@ -99,8 +99,14 @@ export const Navigation = () => {
             </div>
           </div>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden">
+          {/* Mobile menu button and logo */}
+          <div className="md:hidden flex justify-between items-center w-full">
+            <Link
+              to="/"
+              className="text-lg font-bold hover:opacity-80 justify-self-start"
+            >
+              Lens Tracker
+            </Link>
             <button
               onClick={toggleMenu}
               className="inline-flex items-center justify-center rounded-md p-2 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 dark:hover:bg-gray-700"
@@ -144,13 +150,13 @@ export const Navigation = () => {
 
       {/* Mobile menu */}
       <div className={`${isMenuOpen ? 'block' : 'hidden'} md:hidden`}>
-        <div className="space-y-1 border-t border-gray-200 px-2 pb-3 pt-2 sm:px-3 dark:border-gray-700">
+        <div className="space-y-1 border-t border-gray-200 px-2 pb-3 pt-2 sm:px-3 dark:border-gray-700 text-left">
           {user &&
             routes.map((item) => (
               <Link
                 key={item.title}
                 to={item.path}
-                className="block rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+                className="block rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-700 text-left"
                 onClick={closeMenu}
               >
                 {item.title}
@@ -160,29 +166,30 @@ export const Navigation = () => {
           {/* Theme toggle button - Mobile */}
           <button
             onClick={handleToggleTheme}
-            className="block w-full rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="block w-full rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-700 text-left"
           >
-            {theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode'}
+            {theme === 'dark' ? '☀️ Light mode' : '🌙 Dark mode'}
           </button>
+          {user && (
+            <Link
+              to="/profile"
+              onClick={closeMenu}
+              className="flex items-center gap-2 rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-700 text-left"
+            >
+              <ProfileIcon className="size-5 dark:text-gray-300" />
+              Профиль
+            </Link>
+          )}
           {user && (
             <button
               onClick={() => {
                 dispatch(logout())
                 closeMenu()
               }}
-              className="block w-full rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+              className="block w-full rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-700 text-left"
             >
               Выйти
             </button>
-          )}
-          {user && (
-            <Link
-              to="/profile"
-              onClick={closeMenu}
-              className="block rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              <ProfileIcon className="size-5 dark:text-gray-300" />
-            </Link>
           )}
         </div>
       </div>

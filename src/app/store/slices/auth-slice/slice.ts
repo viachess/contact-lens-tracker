@@ -60,11 +60,15 @@ export const signupWithEmail = createAsyncThunk<
 
 export const logout = createAsyncThunk<true, void, { rejectValue: string }>(
   'auth/logout',
-  async (_, { rejectWithValue }) => {
+  async () => {
     const supabase = getSupabaseClient()
-    const { error } = await supabase.auth.signOut()
-    if (error) return rejectWithValue(error.message)
-    return true
+    // Perform only a local sign-out in the browser to avoid server 401/403 noise
+    try {
+      await supabase.auth.signOut({ scope: 'local' })
+    } catch (error) {
+      console.error('Failed to sign out locally:', error)
+    }
+    return true as const
   }
 )
 

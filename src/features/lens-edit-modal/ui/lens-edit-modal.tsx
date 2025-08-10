@@ -4,7 +4,11 @@ import { ModalContainer } from '@/shared/ui/portal-modal'
 import { useState } from 'react'
 import { Lens } from '@/app/store/slices/lens-management-slice'
 import { useAppDispatch, useAppSelector } from '@/app/store/hooks'
-import { swapCurrentLensForUser } from '@/app/store/slices/lens-management-slice'
+import {
+  swapCurrentLensForUser,
+  takeOffCurrentLensForUser
+} from '@/app/store/slices/lens-management-slice'
+import { openModal } from '@/app/store/slices/modal-slice/slice'
 import { selectUser } from '@/app/store/slices/auth-slice/selectors'
 import {
   isLensExpired,
@@ -105,6 +109,8 @@ export const LensEditModal = ({
     onClose()
   }
 
+  // No confirmation in edit modal: take off or put on directly
+
   const handleBackgroundClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       onClose()
@@ -116,6 +122,8 @@ export const LensEditModal = ({
   const isExpired = isLensExpired(lens)
   const canSwap =
     !isExpired && lens.status !== 'in-use' && currentLens?.id !== lens.id
+  const canTakeOff =
+    !isExpired && lens.status === 'in-use' && currentLens?.id === lens.id
 
   return (
     <ModalContainer name={MODAL_IDS.LENS_EDIT}>
@@ -179,9 +187,19 @@ export const LensEditModal = ({
                     <span className="hidden sm:inline">Редактировать</span>
                     <span className="sm:hidden">Изменить</span>
                   </button>
-                  {canSwap && (
+                  {(canSwap || canTakeOff) && (
                     <button
-                      onClick={handleSwapLens}
+                      onClick={() => {
+                        if (!user?.id) return
+                        if (canTakeOff) {
+                          dispatch(
+                            takeOffCurrentLensForUser({ userId: user.id })
+                          )
+                          onClose()
+                        } else {
+                          handleSwapLens()
+                        }
+                      }}
                       className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-white/20 px-4 py-3 font-semibold text-white transition-all hover:bg-white/30 focus:outline-none focus:ring-2 focus:ring-white/50 sm:px-6"
                     >
                       <svg
@@ -194,10 +212,14 @@ export const LensEditModal = ({
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth={2}
-                          d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+                          d={
+                            canTakeOff
+                              ? 'M6 18L18 6M6 6l12 12'
+                              : 'M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4'
+                          }
                         />
                       </svg>
-                      <span>Надеть</span>
+                      <span>{canTakeOff ? 'Снять' : 'Надеть'}</span>
                     </button>
                   )}
                   <button

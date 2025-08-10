@@ -25,10 +25,11 @@ export const SessionProvider = ({
     const supabase = getSupabaseClient()
     // Mark ready only after receiving INITIAL_SESSION from Supabase
     const { data: subscription } = supabase.auth.onAuthStateChange((event) => {
+      dispatch(initSession())
+      // INITIAL_SESSION fires once on mount; if no session, we should still mark ready
       if (event === 'INITIAL_SESSION') {
         setReady(true)
       }
-      dispatch(initSession())
     })
     // Kick off an initial session sync as well
     dispatch(initSession())
@@ -44,8 +45,9 @@ export const SessionProvider = ({
     }
   }, [user?.id, dispatch])
 
-  if (!ready) {
-    return <div className="p-6 text-sm text-gray-500">Loading session...</div>
+  // In case INITIAL_SESSION event is missed (edge), fallback on status change
+  if (!ready && status !== 'authenticating') {
+    setReady(true)
   }
 
   return <>{children}</>
