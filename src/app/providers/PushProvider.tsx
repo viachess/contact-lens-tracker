@@ -42,16 +42,37 @@ async function subscribeToPush(): Promise<void> {
 
 export function PushProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
-    ;(async () => {
+    // iOS Safari requires a user gesture to show the permission prompt reliably
+    const handler = async () => {
       try {
         if ('Notification' in window && Notification.permission === 'default') {
-          await Notification.requestPermission()
-        }
-        if (Notification.permission === 'granted') {
+          const result = await Notification.requestPermission()
+          if (result === 'granted') {
+            await subscribeToPush()
+          }
+        } else if (Notification.permission === 'granted') {
           await subscribeToPush()
         }
       } catch {}
+      window.removeEventListener('click', handler)
+      window.removeEventListener('touchend', handler)
+    }
+    window.addEventListener('click', handler, { once: true })
+    window.addEventListener('touchend', handler, { once: true })
+
+    // As a fallback, try after load if already granted
+    ;(async () => {
+      if (
+        typeof Notification !== 'undefined' &&
+        Notification.permission === 'granted'
+      ) {
+        await subscribeToPush()
+      }
     })()
+    return () => {
+      window.removeEventListener('click', handler)
+      window.removeEventListener('touchend', handler)
+    }
   }, [])
 
   return <>{children}</>

@@ -33,6 +33,8 @@
     "react-hook-form": "^7.62.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^6.30.1",
+    "@visx/xychart": "^3.12.0",
+    "react-select": "^5.8.0",
     "zod": "^4.0.15"
   },
   "devDependencies": {
