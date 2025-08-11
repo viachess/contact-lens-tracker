@@ -1,6 +1,7 @@
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 import 'tailwindcss/tailwind.css'
+import './theme.css'
 import { App } from './App'
 import { store } from './store/store'
 

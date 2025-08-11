@@ -1,0 +1,43 @@
+:root {
+  --color-navbar: #ffffff;
+  --color-navbar-text: #111827;
+  --color-background: #f7f8fa;
+  --color-surface: #ffffff;
+  --color-surface-text: #111827;
+  --color-button-primary: #2563eb; /* tailwind blue-600 */
+  --color-button-primary-text: #ffffff;
+  --color-button-secondary: #6b7280; /* tailwind gray-500 */
+  --color-button-secondary-text: #ffffff;
+  --color-button-danger: #dc2626; /* tailwind red-600 */
+  --color-button-danger-text: #ffffff;
+}
+
+.themed-surface {
+  background-color: var(--color-surface);
+}
+
+.themed-btn {
+  background-color: var(--color-button-primary);
+  color: var(--color-button-primary-text);
+}
+.themed-btn:hover {
+  filter: brightness(0.95);
+}
+
+.themed-btn.secondary {
+  background-color: var(--color-button-secondary);
+  color: var(--color-button-secondary-text);
+}
+.themed-btn.secondary:hover {
+  filter: brightness(0.95);
+}
+
+.themed-btn.danger {
+  background-color: var(--color-button-danger);
+  color: var(--color-button-danger-text);
+}
+.themed-btn.danger:hover {
+  filter: brightness(0.95);
+}
+
+

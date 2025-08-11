@@ -29,8 +29,11 @@ export const Navigation = () => {
   return (
     <nav
       className={`fixed inset-x-0 top-0 z-50 shadow-md ${
-        theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'
+        theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-[var(--color-navbar)]'
       }`}
+      style={
+        theme === 'dark' ? undefined : { color: 'var(--color-navbar-text)' }
+      }
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
