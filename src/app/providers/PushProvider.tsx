@@ -26,10 +26,13 @@ async function subscribeToPush(): Promise<void> {
   if (!sub) {
     const key = await getPublicKey()
     if (!key) return
+    const appServerKey = key.buffer.slice(
+      key.byteOffset,
+      key.byteOffset + key.byteLength
+    ) as ArrayBuffer
     sub = await reg.pushManager.subscribe({
       userVisibleOnly: true,
-      // Pass Uint8Array directly (BufferSource)
-      applicationServerKey: key as unknown as Uint8Array
+      applicationServerKey: appServerKey
     })
   }
   try {
