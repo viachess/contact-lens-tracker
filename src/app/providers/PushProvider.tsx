@@ -28,16 +28,26 @@ async function subscribeToPush(): Promise<void> {
     if (!key) return
     sub = await reg.pushManager.subscribe({
       userVisibleOnly: true,
-      // TypeScript DOM lib mismatch workaround: accept ArrayBuffer
-      applicationServerKey: (key as unknown as Uint8Array)
-        .buffer as unknown as ArrayBuffer
+      // Pass Uint8Array directly (BufferSource)
+      applicationServerKey: key as unknown as Uint8Array
     })
   }
-  await fetch(`${SERVER_ORIGIN}/subscribe`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(sub)
-  }).catch(() => {})
+  try {
+    const res = await fetch(`${SERVER_ORIGIN}/subscribe`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(sub)
+    })
+    if (!res.ok) {
+      // Surface server error in console to aid debugging
+      const txt = await res.text().catch(() => '')
+      // eslint-disable-next-line no-console
+      console.error('[push] subscribe failed', res.status, txt)
+    }
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('[push] subscribe network error', e)
+  }
 }
 
 export function PushProvider({ children }: { children: React.ReactNode }) {
