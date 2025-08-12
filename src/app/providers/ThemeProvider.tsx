@@ -5,7 +5,11 @@ import {
   selectThemeColors
 } from '../store/slices/app-slice/selectors'
 import { selectUser } from '@/app/store/slices/auth-slice/selectors'
-import { setThemeColors } from '@/app/store/slices/app-slice/appSlice'
+import {
+  setThemeColors,
+  setTheme,
+  DEFAULT_THEME_COLORS
+} from '@/app/store/slices/app-slice/appSlice'
 import {
   getSupabaseClient,
   isSupabaseConfigured
@@ -72,10 +76,10 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     } catch {}
   }, [colors])
 
-  // Load saved theme when user becomes available or on first mount
+  // Load or reset theme when auth state changes
   useEffect(() => {
     const load = async () => {
-      // Prefer server if configured and user logged in
+      // If logged in, prefer server-stored theme
       if (isSupabaseConfigured && user?.id) {
         try {
           const supabase = getSupabaseClient()
@@ -89,8 +93,16 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
             return
           }
         } catch {}
+      } else {
+        // Logged out: reset to default light theme and clear stored colors
+        try {
+          localStorage.removeItem('user_theme_colors')
+        } catch {}
+        dispatch(setTheme('light'))
+        dispatch(setThemeColors(DEFAULT_THEME_COLORS))
+        return
       }
-      // Fallback to localStorage
+      // If logged in but no server data, try localStorage fallback
       try {
         const raw = localStorage.getItem('user_theme_colors')
         if (raw) {

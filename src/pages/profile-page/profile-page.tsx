@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react'
+import cn from 'classnames'
 import { useAppDispatch, useAppSelector } from '@/app/store/hooks'
 import { selectUser } from '@/app/store/slices/auth-slice/selectors'
 import {
@@ -69,49 +70,15 @@ export const ProfilePage: React.FC = () => {
     }
   }
 
-  const handleLoad = async () => {
-    if (supabase && user?.id) {
-      const { data } = await supabase
-        .from('user_settings')
-        .select('theme_colors')
-        .eq('user_id', user.id)
-        .single()
-      if (
-        data?.theme_colors &&
-        typeof data.theme_colors === 'object' &&
-        typeof (data.theme_colors as any).navbar === 'string'
-      ) {
-        dispatch(setThemeColors(data.theme_colors as any))
-        setLocalColors(data.theme_colors as any)
-      }
-    } else {
-      const raw = localStorage.getItem('user_theme_colors')
-      if (raw) {
-        const parsed = JSON.parse(raw) as unknown
-        if (
-          parsed &&
-          typeof parsed === 'object' &&
-          typeof (parsed as any).navbar === 'string'
-        ) {
-          dispatch(setThemeColors(parsed as any))
-          setLocalColors(parsed as any)
-        }
-      }
-    }
-  }
-
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
       <h1 className="mb-6 text-3xl font-bold">Профиль</h1>
-      <div className="rounded-md border p-4">
+      <div className="rounded-md border p-4 bg-[var(--color-surface)] text-[var(--color-surface-text)] dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100">
         <p className="text-sm text-gray-500 dark:text-gray-400">Email</p>
         <p className="text-lg">{user?.email ?? '—'}</p>
       </div>
 
-      <div
-        className="mt-8 rounded-md border border-gray-200 bg-[var(--color-surface)] p-4 dark:border-gray-700 dark:bg-gray-800"
-        style={{ color: 'var(--color-surface-text)' }}
-      >
+      <div className="mt-8 rounded-md border p-4 bg-[var(--color-surface)] text-[var(--color-surface-text)] border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-semibold dark:text-gray-100">
             Тема приложения
@@ -253,31 +220,18 @@ export const ProfilePage: React.FC = () => {
         <div className="mt-4 flex gap-2">
           <button
             onClick={handleSave}
-            className="rounded px-4 py-2 text-sm hover:brightness-95 dark:bg-blue-500 dark:hover:bg-blue-600"
-            style={{
-              backgroundColor: 'var(--color-button-primary)',
-              color: 'var(--color-button-primary-text)'
-            }}
+            className={
+              'rounded px-4 py-2 text-sm hover:brightness-95 bg-[var(--color-button-primary)] text-[var(--color-button-primary-text)] dark:bg-blue-500 dark:hover:bg-blue-600'
+            }
           >
             Сохранить тему
           </button>
-          <button
-            onClick={handleLoad}
-            className="rounded px-4 py-2 text-sm hover:brightness-95 dark:bg-gray-500 dark:hover:bg-gray-600"
-            style={{
-              backgroundColor: 'var(--color-button-secondary)',
-              color: 'var(--color-button-secondary-text)'
-            }}
-          >
-            Загрузить сохранённую
-          </button>
+
           <button
             onClick={handleReset}
-            className="rounded px-4 py-2 text-sm hover:brightness-95 dark:bg-red-500 dark:hover:bg-red-600"
-            style={{
-              backgroundColor: 'var(--color-button-danger)',
-              color: 'var(--color-button-danger-text)'
-            }}
+            className={
+              'rounded px-4 py-2 text-sm hover:brightness-95 bg-[var(--color-button-danger)] text-[var(--color-button-danger-text)] dark:bg-red-500 dark:hover:bg-red-600'
+            }
           >
             Сбросить тему
           </button>

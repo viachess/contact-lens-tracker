@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import cn from 'classnames'
 import { Link } from 'react-router-dom'
 import { toggleTheme as toggleThemeAction } from '@/app/store/slices/app-slice/appSlice'
 import { selectTheme } from '@/app/store/slices/app-slice/selectors'
@@ -27,14 +28,7 @@ export const Navigation = () => {
   }
 
   return (
-    <nav
-      className={`fixed inset-x-0 top-0 z-50 shadow-md ${
-        theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-[var(--color-navbar)]'
-      }`}
-      style={
-        theme === 'dark' ? undefined : { color: 'var(--color-navbar-text)' }
-      }
-    >
+    <nav className="fixed inset-x-0 top-0 z-50 shadow-md bg-[var(--color-navbar)] text-[var(--color-navbar-text)] dark:bg-gray-900 dark:text-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Desktop Navigation - Left side with Logo */}
@@ -48,7 +42,7 @@ export const Navigation = () => {
                   <Link
                     key={item.title}
                     to={item.path}
-                    className="rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+                    className="rounded-md px-3 py-2 text-sm font-medium transition-opacity hover:opacity-80"
                   >
                     {item.title}
                   </Link>
@@ -63,11 +57,7 @@ export const Navigation = () => {
             <div className="hidden md:block">
               <button
                 onClick={handleToggleTheme}
-                className={`inline-flex items-center rounded-md border px-3 py-2 text-sm font-medium shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
-                  theme === 'dark'
-                    ? 'border-gray-600 bg-gray-800 text-white hover:bg-gray-700'
-                    : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
-                }`}
+                className="inline-flex items-center rounded-md border px-3 py-2 text-sm font-medium shadow-sm transition-opacity focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 hover:opacity-80"
               >
                 {theme === 'dark' ? '☀️' : '🌙'}
               </button>
@@ -77,7 +67,7 @@ export const Navigation = () => {
               <div className="hidden md:block">
                 <Link
                   to="/profile"
-                  className="inline-flex items-center rounded-md border px-3 py-2 text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700"
+                  className="inline-flex items-center rounded-md border px-3 py-2 text-sm font-medium transition-opacity hover:opacity-80"
                 >
                   <ProfileIcon className="size-5 dark:text-gray-300 dark:fill-gray-300" />
                 </Link>
@@ -87,14 +77,14 @@ export const Navigation = () => {
               {user ? (
                 <button
                   onClick={() => dispatch(logout())}
-                  className="inline-flex items-center rounded-md border px-3 py-2 text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700"
+                  className="inline-flex items-center rounded-md border px-3 py-2 text-sm font-medium transition-opacity hover:opacity-80"
                 >
                   Выйти
                 </button>
               ) : (
                 <Link
                   to="/login"
-                  className="inline-flex items-center rounded-md border px-3 py-2 text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700"
+                  className="inline-flex items-center rounded-md border px-3 py-2 text-sm font-medium transition-opacity hover:opacity-80"
                 >
                   Войти
                 </Link>
@@ -112,7 +102,7 @@ export const Navigation = () => {
             </Link>
             <button
               onClick={toggleMenu}
-              className="inline-flex items-center justify-center rounded-md p-2 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 dark:hover:bg-gray-700"
+              className="inline-flex items-center justify-center rounded-md p-2 transition-opacity hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
               aria-expanded="false"
             >
               <span className="sr-only">Open main menu</span>
@@ -152,14 +142,14 @@ export const Navigation = () => {
       </div>
 
       {/* Mobile menu */}
-      <div className={`${isMenuOpen ? 'block' : 'hidden'} md:hidden`}>
+      <div className={cn(isMenuOpen ? 'block' : 'hidden', 'md:hidden')}>
         <div className="space-y-1 border-t border-gray-200 px-2 pb-3 pt-2 sm:px-3 dark:border-gray-700 text-left">
           {user &&
             routes.map((item) => (
               <Link
                 key={item.title}
                 to={item.path}
-                className="block rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-700 text-left"
+                className="block rounded-md px-3 py-2 text-base font-medium transition-opacity hover:opacity-80 text-left"
                 onClick={closeMenu}
               >
                 {item.title}
@@ -169,7 +159,7 @@ export const Navigation = () => {
           {/* Theme toggle button - Mobile */}
           <button
             onClick={handleToggleTheme}
-            className="block w-full rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-700 text-left"
+            className="block w-full rounded-md px-3 py-2 text-base font-medium transition-opacity hover:opacity-80 text-left"
           >
             {theme === 'dark' ? '☀️ Light mode' : '🌙 Dark mode'}
           </button>
@@ -177,7 +167,7 @@ export const Navigation = () => {
             <Link
               to="/profile"
               onClick={closeMenu}
-              className="flex items-center gap-2 rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-700 text-left"
+              className="flex items-center gap-2 rounded-md px-3 py-2 text-base font-medium transition-opacity hover:opacity-80 text-left"
             >
               <ProfileIcon className="size-5 dark:text-gray-300" />
               Профиль
@@ -189,7 +179,7 @@ export const Navigation = () => {
                 dispatch(logout())
                 closeMenu()
               }}
-              className="block w-full rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-700 text-left"
+              className="block w-full rounded-md px-3 py-2 text-base font-medium transition-opacity hover:opacity-80 text-left"
             >
               Выйти
             </button>

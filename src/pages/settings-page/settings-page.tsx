@@ -16,6 +16,7 @@ import {
   parseDate
 } from '@/app/store/slices/lens-management-slice/selectors'
 import { useState } from 'react'
+import cn from 'classnames'
 
 export const SettingsPage = () => {
   const dispatch = useAppDispatch()
@@ -108,14 +109,14 @@ export const SettingsPage = () => {
         Настройки
       </h1>
 
-      <div className="rounded-xl bg-white p-6 shadow-xl dark:bg-gray-800">
+      <div className="rounded-xl p-6 shadow-xl border border-gray-200 bg-[var(--color-surface)] text-[var(--color-surface-text)] dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100">
         <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-lg font-medium text-gray-900 dark:text-white">
             Мои линзы
           </h2>
           <button
             onClick={handleAddLens}
-            className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 sm:w-auto dark:bg-blue-500 dark:hover:bg-blue-600"
+            className="w-full rounded-lg px-4 py-2 text-sm font-medium transition-colors hover:brightness-95 sm:w-auto bg-[var(--color-button-primary)] text-[var(--color-button-primary-text)] dark:bg-blue-500 dark:hover:bg-blue-600"
           >
             Добавить линзу
           </button>
@@ -127,7 +128,7 @@ export const SettingsPage = () => {
             return (
               <div
                 key={lens.id}
-                className="cursor-pointer rounded-lg border border-gray-200 p-4 transition-colors hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:hover:border-gray-600 dark:hover:bg-gray-700/50"
+                className="cursor-pointer rounded-lg p-4 transition-colors border border-gray-200 hover:brightness-95 bg-[var(--color-surface)] text-[var(--color-surface-text)] dark:border-gray-700 dark:hover:border-gray-600 dark:hover:bg-gray-700/50 dark:text-gray-100"
                 onClick={() => handleLensClick(lens)}
               >
                 <div className="flex flex-col gap-3">
