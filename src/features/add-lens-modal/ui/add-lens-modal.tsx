@@ -1,6 +1,8 @@
 import { MODAL_IDS } from '@/app/store'
 import { ModalContainer } from '@/shared/ui/portal-modal'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
+import CreatableSelect from 'react-select/creatable'
+import { MANUFACTURER_BRANDS_MAP } from '@/shared/constants/lens-manufacturers'
 import {
   Lens,
   lensTypeToWearPeriodMap
@@ -9,10 +11,17 @@ import {
 interface AddLensModalProps {
   onClose: () => void
   onAdd: (lens: Omit<Lens, 'id'>) => void
+  mode?: 'single' | 'pack'
 }
 
-export const AddLensModal = ({ onClose, onAdd }: AddLensModalProps) => {
+export const AddLensModal = ({
+  onClose,
+  onAdd,
+  mode = 'single'
+}: AddLensModalProps) => {
   console.log('AddLensModal rendered')
+
+  const DEFAULT_PACK_PAIR_COUNT = 3
 
   const [formData, setFormData] = useState<Omit<Lens, 'id'>>({
     manufacturer: '',
@@ -27,21 +36,72 @@ export const AddLensModal = ({ onClose, onAdd }: AddLensModalProps) => {
     openedDate: null
   })
 
+  const [pairCountInput, setPairCountInput] = useState<string>(
+    String(DEFAULT_PACK_PAIR_COUNT)
+  )
+  const [pairCountError, setPairCountError] = useState<string | null>(null)
+
+  const manufacturerToBrands = useMemo(() => {
+    const map = new Map<string, Set<string>>()
+    Object.entries(MANUFACTURER_BRANDS_MAP).forEach(([m, brands]) => {
+      map.set(m, new Set(brands))
+    })
+    return map
+  }, [])
+  const manufacturerOptions = useMemo(() => {
+    return Array.from(manufacturerToBrands.keys())
+      .sort()
+      .map((v) => ({ value: v, label: v }))
+  }, [manufacturerToBrands])
+  const brandOptions = useMemo(() => {
+    const currentManufacturer = (formData.manufacturer || '').trim()
+    const brands = currentManufacturer
+      ? manufacturerToBrands.get(currentManufacturer)
+      : undefined
+    return brands
+      ? Array.from(brands)
+          .sort()
+          .map((v) => ({ value: v, label: v }))
+      : []
+  }, [manufacturerToBrands, formData.manufacturer])
+
+  const closeAndReset = () => {
+    if (mode === 'pack') {
+      setPairCountInput(String(DEFAULT_PACK_PAIR_COUNT))
+      setPairCountError(null)
+    }
+    onClose()
+  }
+
   const handleBackgroundClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
-      onClose()
+      closeAndReset()
     }
   }
 
   const handleSave = () => {
     if (formData.manufacturer && formData.sphere) {
-      onAdd(formData)
-      onClose()
+      let count = 1
+      if (mode === 'pack') {
+        const parsed =
+          pairCountInput.trim() === '' ? NaN : Number(pairCountInput)
+        const intVal = Number.isFinite(parsed) ? Math.floor(parsed) : NaN
+        const isValid = Number.isFinite(intVal) && intVal >= 1 && intVal <= 50
+        if (!isValid) {
+          setPairCountError('Введите целое число от 1 до 50')
+          return
+        }
+        count = intVal
+      }
+      for (let i = 0; i < count; i += 1) {
+        onAdd(formData)
+      }
+      closeAndReset()
     }
   }
 
   const handleCancel = () => {
-    onClose()
+    closeAndReset()
   }
 
   const updateFormData = (field: string, value: string | null | number) => {
@@ -69,11 +129,13 @@ export const AddLensModal = ({ onClose, onAdd }: AddLensModalProps) => {
             <div className="flex items-center justify-between">
               <div className="min-w-0 flex-1">
                 <h3 className="text-lg font-bold sm:text-2xl">
-                  Добавить новую линзу
+                  {mode === 'pack'
+                    ? 'Добавить упаковку линз'
+                    : 'Добавить новую линзу'}
                 </h3>
               </div>
               <button
-                onClick={onClose}
+                onClick={closeAndReset}
                 className="ml-4 shrink-0 rounded-full bg-white/20 p-2 text-white transition-colors hover:bg-white/30 focus:outline-none focus:ring-2 focus:ring-white/50"
               >
                 <svg
@@ -105,28 +167,49 @@ export const AddLensModal = ({ onClose, onAdd }: AddLensModalProps) => {
                   <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     Производитель *
                   </label>
-                  <input
-                    type="text"
-                    value={formData.manufacturer}
-                    onChange={(e) =>
-                      updateFormData('manufacturer', e.target.value)
-                    }
-                    className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:px-4 sm:py-3 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                    placeholder="Например: Acuvue"
-                  />
+                  <div className="mt-2 w-full">
+                    <CreatableSelect
+                      className="w-full"
+                      classNamePrefix="rs"
+                      placeholder="Выберите или введите..."
+                      options={manufacturerOptions}
+                      value={
+                        formData.manufacturer
+                          ? {
+                              value: formData.manufacturer,
+                              label: formData.manufacturer
+                            }
+                          : null
+                      }
+                      onChange={(opt: any) =>
+                        updateFormData('manufacturer', opt ? opt.value : '')
+                      }
+                      isClearable
+                    />
+                  </div>
                 </div>
 
                 <div>
                   <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     Бренд
                   </label>
-                  <input
-                    type="text"
-                    value={formData.brand}
-                    onChange={(e) => updateFormData('brand', e.target.value)}
-                    className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:px-4 sm:py-3 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                    placeholder="Например: TruEye"
-                  />
+                  <div className="mt-2 w-full">
+                    <CreatableSelect
+                      className="w-full"
+                      classNamePrefix="rs"
+                      placeholder="Выберите или введите..."
+                      options={brandOptions}
+                      value={
+                        formData.brand
+                          ? { value: formData.brand, label: formData.brand }
+                          : null
+                      }
+                      onChange={(opt: any) =>
+                        updateFormData('brand', opt ? opt.value : '')
+                      }
+                      isClearable
+                    />
+                  </div>
                 </div>
 
                 <div>
@@ -215,6 +298,30 @@ export const AddLensModal = ({ onClose, onAdd }: AddLensModalProps) => {
                     <option value="in-use">В использовании</option>
                   </select>
                 </div>
+
+                {mode === 'pack' && (
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Количество пар в упаковке
+                    </label>
+                    <input
+                      type="number"
+                      value={pairCountInput}
+                      onChange={(e) => {
+                        setPairCountInput(e.target.value)
+                        if (pairCountError) setPairCountError(null)
+                      }}
+                      className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:px-4 sm:py-3 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                      min={1}
+                      max={50}
+                    />
+                    {pairCountError && (
+                      <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                        {pairCountError}
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -249,7 +356,9 @@ export const AddLensModal = ({ onClose, onAdd }: AddLensModalProps) => {
               disabled={!formData.manufacturer || !formData.sphere}
               className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-green-500 to-green-600 px-4 py-3 font-semibold text-white transition-all hover:from-green-600 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-green-500/20 disabled:cursor-not-allowed disabled:opacity-50 sm:px-6"
             >
-              <span className="hidden sm:inline">Добавить линзу</span>
+              <span className="hidden sm:inline">
+                {mode === 'pack' ? 'Добавить упаковку' : 'Добавить линзу'}
+              </span>
               <span className="sm:hidden">Добавить</span>
             </button>
             <button

@@ -1,13 +1,15 @@
 import { MODAL_IDS } from '@/app/store'
 import { EditIcon, TrashIcon } from '@/shared/ui/icons'
 import { ModalContainer } from '@/shared/ui/portal-modal'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
+import CreatableSelect from 'react-select/creatable'
 import { Lens } from '@/app/store/slices/lens-management-slice'
 import { useAppDispatch, useAppSelector } from '@/app/store/hooks'
 import {
   swapCurrentLensForUser,
   takeOffCurrentLensForUser
 } from '@/app/store/slices/lens-management-slice'
+import { MANUFACTURER_BRANDS_MAP } from '@/shared/constants/lens-manufacturers'
 import { openModal } from '@/app/store/slices/modal-slice/slice'
 import { selectUser } from '@/app/store/slices/auth-slice/selectors'
 import {
@@ -76,8 +78,32 @@ export const LensEditModal = ({
     (state) => state.lensManagement.currentLens
   )
   const user = useAppSelector(selectUser)
+  const manufacturerToBrands = useMemo(() => {
+    const map = new Map<string, Set<string>>()
+    Object.entries(MANUFACTURER_BRANDS_MAP).forEach(([m, brands]) => {
+      map.set(m, new Set(brands))
+    })
+    return map
+  }, [])
   const [isEditing, setIsEditing] = useState(false)
   const [editData, setEditData] = useState<Lens | null>(null)
+
+  const manufacturerOptions = useMemo(() => {
+    return Array.from(manufacturerToBrands.keys())
+      .sort()
+      .map((v) => ({ value: v, label: v }))
+  }, [manufacturerToBrands])
+  const brandOptions = useMemo(() => {
+    const currentManufacturer = (editData?.manufacturer || '').trim()
+    const brands = currentManufacturer
+      ? manufacturerToBrands.get(currentManufacturer)
+      : undefined
+    return brands
+      ? Array.from(brands)
+          .sort()
+          .map((v) => ({ value: v, label: v }))
+      : []
+  }, [manufacturerToBrands, editData?.manufacturer])
 
   if (!lens) return null
 
@@ -248,18 +274,30 @@ export const LensEditModal = ({
                     Производитель
                   </label>
                   {isEditing ? (
-                    <input
-                      type="text"
-                      value={editData?.manufacturer || ''}
-                      onChange={(e) =>
-                        setEditData((prev) =>
-                          prev
-                            ? { ...prev, manufacturer: e.target.value }
+                    <div className="mt-2 w-full">
+                      <CreatableSelect
+                        className="w-full"
+                        classNamePrefix="rs"
+                        placeholder="Выберите или введите..."
+                        options={manufacturerOptions}
+                        value={
+                          editData?.manufacturer
+                            ? {
+                                value: editData.manufacturer,
+                                label: editData.manufacturer
+                              }
                             : null
-                        )
-                      }
-                      className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:px-4 sm:py-3 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                    />
+                        }
+                        onChange={(opt: any) =>
+                          setEditData((prev) =>
+                            prev
+                              ? { ...prev, manufacturer: opt?.value || '' }
+                              : null
+                          )
+                        }
+                        isClearable
+                      />
+                    </div>
                   ) : (
                     <p className="mt-2 text-base font-medium text-gray-900 sm:text-lg dark:text-white">
                       {lens.manufacturer}
@@ -272,16 +310,25 @@ export const LensEditModal = ({
                     Бренд
                   </label>
                   {isEditing ? (
-                    <input
-                      type="text"
-                      value={editData?.brand || ''}
-                      onChange={(e) =>
-                        setEditData((prev) =>
-                          prev ? { ...prev, brand: e.target.value } : null
-                        )
-                      }
-                      className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:px-4 sm:py-3 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                    />
+                    <div className="mt-2 w-full">
+                      <CreatableSelect
+                        className="w-full"
+                        classNamePrefix="rs"
+                        placeholder="Выберите или введите..."
+                        options={brandOptions}
+                        value={
+                          editData?.brand
+                            ? { value: editData.brand, label: editData.brand }
+                            : null
+                        }
+                        onChange={(opt: any) =>
+                          setEditData((prev) =>
+                            prev ? { ...prev, brand: opt?.value || '' } : null
+                          )
+                        }
+                        isClearable
+                      />
+                    </div>
                   ) : (
                     <p className="mt-2 text-base font-medium text-gray-900 sm:text-lg dark:text-white">
                       {lens.brand}

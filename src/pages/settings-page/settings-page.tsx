@@ -16,13 +16,13 @@ import {
   parseDate
 } from '@/app/store/slices/lens-management-slice/selectors'
 import { useState } from 'react'
-import cn from 'classnames'
 
 export const SettingsPage = () => {
   const dispatch = useAppDispatch()
   const lenses = useAppSelector(selectAllLenses)
   const user = useAppSelector(selectUser)
   const [selectedLens, setSelectedLens] = useState<Lens | null>(null)
+  const [addMode, setAddMode] = useState<'single' | 'pack'>('single')
 
   const handleLensClick = (lens: Lens) => {
     setSelectedLens(lens)
@@ -47,12 +47,18 @@ export const SettingsPage = () => {
   }
 
   const handleAddLens = () => {
-    console.log('Add lens button clicked, opening modal:', MODAL_IDS.ADD_LENS)
+    setAddMode('single')
+    dispatch(openModal(MODAL_IDS.ADD_LENS))
+  }
+
+  const handleAddPack = () => {
+    setAddMode('pack')
     dispatch(openModal(MODAL_IDS.ADD_LENS))
   }
 
   const handleCloseAddModal = () => {
     dispatch(closeModal())
+    setAddMode('single')
   }
 
   const handleAdd = (lensData: Omit<Lens, 'id'>) => {
@@ -114,12 +120,20 @@ export const SettingsPage = () => {
           <h2 className="text-lg font-medium text-gray-900 dark:text-white">
             Мои линзы
           </h2>
-          <button
-            onClick={handleAddLens}
-            className="w-full rounded-lg px-4 py-2 text-sm font-medium transition-colors hover:brightness-95 sm:w-auto bg-[var(--color-button-primary)] text-[var(--color-button-primary-text)] dark:bg-blue-500 dark:hover:bg-blue-600"
-          >
-            Добавить линзу
-          </button>
+          <div className="flex w-full gap-2 sm:w-auto">
+            <button
+              onClick={handleAddLens}
+              className="w-full rounded-lg px-4 py-2 text-sm font-medium transition-colors hover:brightness-95 sm:w-auto bg-[var(--color-button-primary)] text-[var(--color-button-primary-text)] dark:bg-blue-500 dark:hover:bg-blue-600"
+            >
+              Добавить линзу
+            </button>
+            <button
+              onClick={handleAddPack}
+              className="w-full rounded-lg px-4 py-2 text-sm font-medium transition-colors hover:brightness-95 sm:w-auto bg-[var(--color-button-secondary)] text-[var(--color-button-secondary-text)] dark:bg-blue-500 dark:hover:bg-blue-600"
+            >
+              Добавить упаковку
+            </button>
+          </div>
         </div>
 
         <div className="space-y-3">
@@ -175,7 +189,11 @@ export const SettingsPage = () => {
         onDelete={handleDelete}
       />
 
-      <AddLensModal onClose={handleCloseAddModal} onAdd={handleAdd} />
+      <AddLensModal
+        mode={addMode}
+        onClose={handleCloseAddModal}
+        onAdd={handleAdd}
+      />
     </div>
   )
 }
