@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { nanoid } from 'nanoid'
 import { Lens, LensManagementState } from './types'
-import { getSupabaseClient } from '@/shared/lib/supabaseClient'
+import { getSupabaseClient } from '@/shared/lib/supabase-client'
 import { RootState } from '@/app/store/types'
 
 const initialState: LensManagementState = {

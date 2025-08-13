@@ -9,7 +9,7 @@ import {
   selectAuthStatus,
   selectAuthError
 } from '@/app/store/slices/auth-slice/selectors'
-import { isSupabaseConfigured } from '@/shared/lib/supabaseClient'
+import { isSupabaseConfigured } from '@/shared/lib/supabase-client'
 
 const schema = z.object({
   email: z.email({ message: 'Введите корректный email' }),

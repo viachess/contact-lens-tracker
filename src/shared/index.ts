@@ -1,3 +1,3 @@
-export { hexToRgbA } from './lib/hexToRgbA'
-export { msToDays } from './lib/msToDays'
-export { daysToMs } from './lib/daysToMs'
+export { hexToRgbA } from './lib/hex-to-rgba'
+export { msToDays } from './lib/ms-to-days'
+export { daysToMs } from './lib/days-to-ms'

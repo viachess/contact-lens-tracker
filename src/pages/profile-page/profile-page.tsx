@@ -1,23 +1,20 @@
-import React, { useMemo, useState } from 'react'
-import cn from 'classnames'
 import { useAppDispatch, useAppSelector } from '@/app/store/hooks'
-import { selectUser } from '@/app/store/slices/auth-slice/selectors'
+import {
+  DEFAULT_THEME_COLORS,
+  resetThemeColors,
+  setThemeColors,
+  toggleTheme
+} from '@/app/store/slices/app-slice'
 import {
   selectTheme,
   selectThemeColors
 } from '@/app/store/slices/app-slice/selectors'
-import {
-  setThemeColors,
-  toggleTheme
-} from '@/app/store/slices/app-slice/appSlice'
-import {
-  DEFAULT_THEME_COLORS,
-  resetThemeColors
-} from '@/app/store/slices/app-slice/appSlice'
+import { selectUser } from '@/app/store/slices/auth-slice/selectors'
 import {
   getSupabaseClient,
   isSupabaseConfigured
-} from '@/shared/lib/supabaseClient'
+} from '@/shared/lib/supabase-client'
+import React, { useMemo, useState } from 'react'
 
 export const ProfilePage: React.FC = () => {
   const dispatch = useAppDispatch()

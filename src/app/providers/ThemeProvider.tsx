@@ -9,11 +9,11 @@ import {
   setThemeColors,
   setTheme,
   DEFAULT_THEME_COLORS
-} from '@/app/store/slices/app-slice/appSlice'
+} from '@/app/store/slices/app-slice'
 import {
   getSupabaseClient,
   isSupabaseConfigured
-} from '@/shared/lib/supabaseClient'
+} from '@/shared/lib/supabase-client'
 import '@/app/theme.css'
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {

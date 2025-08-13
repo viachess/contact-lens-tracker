@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '@/app/store/hooks'
 import { initSession } from '@/app/store/slices/auth-slice'
-import { getSupabaseClient } from '@/shared/lib/supabaseClient'
+import { getSupabaseClient } from '@/shared/lib/supabase-client'
 import {
   selectAuthStatus,
   selectUser

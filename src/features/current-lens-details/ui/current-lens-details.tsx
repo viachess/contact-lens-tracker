@@ -1,26 +1,22 @@
 import { MODAL_IDS } from '@/app/store'
-import cn from 'classnames'
 import { useAppDispatch, useAppSelector } from '@/app/store/hooks'
-import {
-  resumeLens,
-  selectCurrentLens
-} from '@/app/store/slices/lens-management-slice'
+import { selectUser } from '@/app/store/slices/auth-slice'
 import {
   calculateTotalUsageMs,
-  getEndOfLocalDay,
   getRemainingDays,
   getRemainingHours,
-  isLensExpired
-} from '@/app/store/slices/lens-management-slice/selectors'
+  isLensExpired,
+  selectCurrentLens
+} from '@/app/store/slices/lens-management-slice'
 import { openModal } from '@/app/store/slices/modal-slice/slice'
 import {
   DiscardConfirmModal,
   PauseConfirmModal
 } from '@/features/lens-action-modals'
+import { getEndOfLocalDay } from '@/shared/lib'
 import { ContactLensIcon, StopSignIcon } from '@/shared/ui/icons'
 import { ProgressBar } from '@/shared/ui/progress-bar'
 import { Link } from 'react-router-dom'
-import { selectUser } from '@/app/store/slices/auth-slice/selectors'
 
 export const CurrentLensDetails = () => {
   const dispatch = useAppDispatch()

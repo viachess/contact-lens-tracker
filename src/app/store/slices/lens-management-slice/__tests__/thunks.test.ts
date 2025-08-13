@@ -11,7 +11,7 @@ import {
   discardCurrentLensForUser
 } from '@/app/store/slices/lens-management-slice/slice'
 import { vi, describe, test, beforeEach, afterEach, expect } from 'vitest'
-import * as supabaseClient from '@/shared/lib/supabaseClient'
+import * as supabaseClient from '@/shared/lib/supabase-client'
 
 // Logging helpers (single place where console is used)
 /* eslint-disable no-console */

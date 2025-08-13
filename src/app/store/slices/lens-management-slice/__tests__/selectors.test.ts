@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeAll, afterAll, vi } from 'vitest'
-import { calculateTotalUsageMs } from '@/app/store/slices/lens-management-slice/selectors'
 import { Lens } from '@/app/store/slices/lens-management-slice/types'
+import { calculateTotalUsageMs } from '../lib'
 
 const fixedNow = new Date('2024-01-01T00:00:00.000Z')
 

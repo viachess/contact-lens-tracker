@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import cn from 'classnames'
 import { Link } from 'react-router-dom'
-import { toggleTheme as toggleThemeAction } from '@/app/store/slices/app-slice/appSlice'
+import { toggleTheme as toggleThemeAction } from '@/app/store/slices/app-slice/slice'
 import { selectTheme } from '@/app/store/slices/app-slice/selectors'
 import { routes } from '@/app/constants'
 import { useAppSelector, useAppDispatch } from '@/app/store/hooks'

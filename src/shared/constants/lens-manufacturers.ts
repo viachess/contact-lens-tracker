@@ -1,3 +1,5 @@
+import { LensTypeByWearPeriodEnum } from '@/app/store/slices/lens-management-slice'
+
 export const MANUFACTURER_BRANDS_MAP: Record<string, string[]> = {
   'Johnson & Johnson': [
     'Acuvue Oasys',
@@ -33,4 +35,52 @@ export const MANUFACTURER_BRANDS_MAP: Record<string, string[]> = {
     'PureVision2'
   ],
   Menicon: ['Miru 1day', 'Miru 1day Flat Pack', 'Miru 1month', 'PremiO']
+}
+
+// Heuristic wear-period inference based on brand naming
+// Returns one of: 'Ежедневные' | 'Двухнедельные' | 'Ежемесячные' | null
+export const inferWearPeriodTitleForBrand = (
+  brandRaw: string
+): string | null => {
+  const brand = (brandRaw || '').toLowerCase()
+  if (!brand) return null
+
+  // Daily lenses indicators
+  const dailyHints = [
+    '1-day',
+    '1 day',
+    'oneday',
+    'one day',
+    'daily',
+    'dailies',
+    'oneday',
+    'one-day',
+    'moist',
+    'tru eye',
+    'trueye',
+    'one day'
+  ]
+  if (dailyHints.some((h) => brand.includes(h)))
+    return LensTypeByWearPeriodEnum.Daily
+
+  // Two weeks indicators
+  const twoWeeksHints = ['two week', '2 week', '2-week', 'двухнедель']
+  if (twoWeeksHints.some((h) => brand.includes(h)))
+    return LensTypeByWearPeriodEnum.TwoWeeks
+
+  // Monthly indicators
+  const monthlyHints = [
+    '30',
+    'month',
+    'monthly',
+    'месяч',
+    'vita',
+    'air optix',
+    'miru 1month',
+    'total30'
+  ]
+  if (monthlyHints.some((h) => brand.includes(h)))
+    return LensTypeByWearPeriodEnum.Monthly
+
+  return null
 }

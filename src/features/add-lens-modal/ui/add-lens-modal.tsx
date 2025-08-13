@@ -2,7 +2,10 @@ import { MODAL_IDS } from '@/app/store'
 import { ModalContainer } from '@/shared/ui/portal-modal'
 import { useMemo, useState } from 'react'
 import CreatableSelect from 'react-select/creatable'
-import { MANUFACTURER_BRANDS_MAP } from '@/shared/constants/lens-manufacturers'
+import {
+  MANUFACTURER_BRANDS_MAP,
+  inferWearPeriodTitleForBrand
+} from '@/shared/constants/lens-manufacturers'
 import {
   Lens,
   lensTypeToWearPeriodMap
@@ -40,6 +43,7 @@ export const AddLensModal = ({
     String(DEFAULT_PACK_PAIR_COUNT)
   )
   const [pairCountError, setPairCountError] = useState<string | null>(null)
+  const [usageError, setUsageError] = useState<string | null>(null)
 
   const manufacturerToBrands = useMemo(() => {
     const map = new Map<string, Set<string>>()
@@ -79,8 +83,35 @@ export const AddLensModal = ({
     }
   }
 
+  const resetForm = () => {
+    setFormData({
+      manufacturer: '',
+      brand: '',
+      wearPeriodTitle: 'Ежедневные',
+      wearPeriodDays: 1,
+      usagePeriodDays: 0,
+      discardDate: null,
+      status: 'unopened',
+      sphere: '',
+      baseCurveRadius: '8.6',
+      openedDate: null
+    })
+    setUsageError(null)
+    if (mode === 'pack') {
+      setPairCountInput(String(DEFAULT_PACK_PAIR_COUNT))
+      setPairCountError(null)
+    }
+  }
+
   const handleSave = () => {
     if (formData.manufacturer && formData.sphere) {
+      // validate usage period
+      const up = formData.usagePeriodDays
+      const isUsageValid = Number.isFinite(up) && up >= 0 && up <= 365
+      if (!isUsageValid) {
+        setUsageError('Введите число от 0 до 365')
+        return
+      }
       let count = 1
       if (mode === 'pack') {
         const parsed =
@@ -108,13 +139,16 @@ export const AddLensModal = ({
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
-  const handleWearPeriodChange = (wearPeriodTitle: string) => {
+  const setWearPeriodByTitle = (wearPeriodTitle: string) => {
     const wearPeriodDays =
       lensTypeToWearPeriodMap[
         wearPeriodTitle as keyof typeof lensTypeToWearPeriodMap
       ]
     updateFormData('wearPeriodTitle', wearPeriodTitle)
     updateFormData('wearPeriodDays', wearPeriodDays)
+  }
+  const handleWearPeriodChange = (wearPeriodTitle: string) => {
+    setWearPeriodByTitle(wearPeriodTitle)
   }
 
   return (
@@ -126,7 +160,7 @@ export const AddLensModal = ({
         <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-gradient-to-br from-white to-gray-50 p-4 shadow-2xl sm:p-8 dark:from-gray-800 dark:to-gray-900">
           {/* Header with gradient background */}
           <div className="mb-6 rounded-xl bg-gradient-to-r from-green-500 to-green-600 p-4 text-white sm:mb-8 sm:p-6">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between">
               <div className="min-w-0 flex-1">
                 <h3 className="text-lg font-bold sm:text-2xl">
                   {mode === 'pack'
@@ -181,9 +215,11 @@ export const AddLensModal = ({
                             }
                           : null
                       }
-                      onChange={(opt: any) =>
+                      onChange={(opt: any) => {
                         updateFormData('manufacturer', opt ? opt.value : '')
-                      }
+                        // reset brand on manufacturer change
+                        updateFormData('brand', '')
+                      }}
                       isClearable
                     />
                   </div>
@@ -204,9 +240,13 @@ export const AddLensModal = ({
                           ? { value: formData.brand, label: formData.brand }
                           : null
                       }
-                      onChange={(opt: any) =>
-                        updateFormData('brand', opt ? opt.value : '')
-                      }
+                      onChange={(opt: any) => {
+                        const nextBrand = opt ? opt.value : ''
+                        updateFormData('brand', nextBrand)
+                        // infer wear period from known brand name
+                        const inferred = inferWearPeriodTitleForBrand(nextBrand)
+                        if (inferred) setWearPeriodByTitle(inferred)
+                      }}
                       isClearable
                     />
                   </div>
@@ -277,11 +317,17 @@ export const AddLensModal = ({
                         'usagePeriodDays',
                         Number.isFinite(parsed) ? Math.max(0, parsed) : 0
                       )
+                      if (usageError) setUsageError(null)
                     }}
                     className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:px-4 sm:py-3 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                     min="0"
                     max="365"
                   />
+                  {usageError && (
+                    <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                      {usageError}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -290,7 +336,13 @@ export const AddLensModal = ({
                   </label>
                   <select
                     value={formData.status}
-                    onChange={(e) => updateFormData('status', e.target.value)}
+                    onChange={(e) => {
+                      const next = e.target.value
+                      updateFormData('status', next)
+                      // if status is set to unopened, reset opened date
+                      if (next === 'unopened')
+                        updateFormData('openedDate', null)
+                    }}
                     className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:px-4 sm:py-3 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                   >
                     <option value="unopened">Не открыты</option>
@@ -366,6 +418,13 @@ export const AddLensModal = ({
               className="flex flex-1 items-center justify-center gap-2 rounded-xl border-2 border-gray-300 px-4 py-3 font-semibold text-gray-700 transition-all hover:bg-gray-50 sm:px-6 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
             >
               Отменить
+            </button>
+            <button
+              type="button"
+              onClick={resetForm}
+              className="flex flex-1 items-center justify-center gap-2 rounded-xl border-2 border-gray-300 px-4 py-3 font-semibold text-gray-700 transition-all hover:bg-gray-50 sm:px-6 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+            >
+              Сбросить форму
             </button>
           </div>
         </div>

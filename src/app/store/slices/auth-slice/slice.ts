@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { getSupabaseClient } from '@/shared/lib/supabaseClient'
+import { getSupabaseClient } from '@/shared/lib/supabase-client'
 
 export interface AuthUser {
   id: string

@@ -1,42 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-
-export interface ThemeColors {
-  navbar: string
-  background: string
-  surface: string
-  buttonPrimary: string
-  buttonSecondary: string
-  buttonDanger: string
-  navbarText: string
-  surfaceText: string
-  buttonPrimaryText: string
-  buttonSecondaryText: string
-  buttonDangerText: string
-}
-
-interface AppState {
-  isLoading: boolean
-  user: {
-    name: string
-    email: string
-  } | null
-  theme: 'light' | 'dark'
-  themeColors: ThemeColors
-}
-
-export const DEFAULT_THEME_COLORS: ThemeColors = {
-  navbar: '#ffffff',
-  background: '#f7f8fa',
-  surface: '#ffffff',
-  buttonPrimary: '#2563eb',
-  buttonSecondary: '#6b7280',
-  buttonDanger: '#dc2626',
-  navbarText: '#111827',
-  surfaceText: '#111827',
-  buttonPrimaryText: '#ffffff',
-  buttonSecondaryText: '#ffffff',
-  buttonDangerText: '#ffffff'
-}
+import { AppState } from './model/app-state'
+import { DEFAULT_THEME_COLORS } from './lib/default-theme-colors'
+import { ThemeColors } from './model/theme-colors'
 
 const initialState: AppState = {
   isLoading: false,

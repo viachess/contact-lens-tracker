@@ -3,20 +3,28 @@ import { EditIcon, TrashIcon } from '@/shared/ui/icons'
 import { ModalContainer } from '@/shared/ui/portal-modal'
 import { useMemo, useState } from 'react'
 import CreatableSelect from 'react-select/creatable'
-import { Lens } from '@/app/store/slices/lens-management-slice'
+import {
+  getRemainingDays,
+  isLensExpired,
+  Lens
+} from '@/app/store/slices/lens-management-slice'
+import { lensTypeToWearPeriodMap } from '@/app/store/slices/lens-management-slice'
 import { useAppDispatch, useAppSelector } from '@/app/store/hooks'
 import {
   swapCurrentLensForUser,
   takeOffCurrentLensForUser
 } from '@/app/store/slices/lens-management-slice'
-import { MANUFACTURER_BRANDS_MAP } from '@/shared/constants/lens-manufacturers'
-import { openModal } from '@/app/store/slices/modal-slice/slice'
-import { selectUser } from '@/app/store/slices/auth-slice/selectors'
 import {
-  isLensExpired,
-  getRemainingDays,
-  parseDate
-} from '@/app/store/slices/lens-management-slice/selectors'
+  MANUFACTURER_BRANDS_MAP,
+  inferWearPeriodTitleForBrand
+} from '@/shared/constants/lens-manufacturers'
+import { selectUser } from '@/app/store/slices/auth-slice'
+import { parseDate } from '@/shared/lib'
+// import {
+//   isLensExpired,
+//   getRemainingDays,
+//   parseDate
+// } from '@/app/store/slices/lens-management-slice/selectors'
 
 interface LensEditModalProps {
   lens: Lens | null
@@ -87,6 +95,15 @@ export const LensEditModal = ({
   }, [])
   const [isEditing, setIsEditing] = useState(false)
   const [editData, setEditData] = useState<Lens | null>(null)
+  const [usageError, setUsageError] = useState<string | null>(null)
+
+  const setWearPeriodByTitle = (title: string) => {
+    const days =
+      lensTypeToWearPeriodMap[title as keyof typeof lensTypeToWearPeriodMap]
+    setEditData((prev) =>
+      prev ? { ...prev, wearPeriodTitle: title, wearPeriodDays: days } : null
+    )
+  }
 
   const manufacturerOptions = useMemo(() => {
     return Array.from(manufacturerToBrands.keys())
@@ -114,6 +131,12 @@ export const LensEditModal = ({
 
   const handleSave = () => {
     if (editData) {
+      const up = editData.usagePeriodDays
+      const isUsageValid = Number.isFinite(up) && up >= 0 && up <= 365
+      if (!isUsageValid) {
+        setUsageError('Введите число от 0 до 365')
+        return
+      }
       onEdit(editData)
       setIsEditing(false)
       setEditData(null)
@@ -160,7 +183,7 @@ export const LensEditModal = ({
         <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-gradient-to-br from-white to-gray-50 p-4 shadow-2xl sm:p-8 dark:from-gray-800 dark:to-gray-900">
           {/* Header with gradient background */}
           <div className="mb-6 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 p-4 text-white sm:mb-8 sm:p-6">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between">
               <div className="min-w-0 flex-1">
                 <h3 className="text-lg font-bold sm:text-2xl">
                   {isEditing ? 'Редактировать линзу' : 'Информация о линзе'}
@@ -195,6 +218,16 @@ export const LensEditModal = ({
                     className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-green-500 to-green-600 px-4 py-3 font-semibold text-white transition-all hover:from-green-600 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-green-500/20 sm:px-6"
                   >
                     Сохранить изменения
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditData({ ...lens })
+                      setUsageError(null)
+                    }}
+                    className="flex flex-1 items-center justify-center gap-2 rounded-xl border-2 border-white/30 px-4 py-3 font-semibold text-white transition-all hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/50 sm:px-6"
+                  >
+                    Сбросить
                   </button>
                   <button
                     onClick={handleCancel}
@@ -291,7 +324,11 @@ export const LensEditModal = ({
                         onChange={(opt: any) =>
                           setEditData((prev) =>
                             prev
-                              ? { ...prev, manufacturer: opt?.value || '' }
+                              ? {
+                                  ...prev,
+                                  manufacturer: opt?.value || '',
+                                  brand: ''
+                                }
                               : null
                           )
                         }
@@ -322,9 +359,25 @@ export const LensEditModal = ({
                             : null
                         }
                         onChange={(opt: any) =>
-                          setEditData((prev) =>
-                            prev ? { ...prev, brand: opt?.value || '' } : null
-                          )
+                          setEditData((prev) => {
+                            if (!prev) return null
+                            const nextBrand = opt?.value || ''
+                            const inferred =
+                              inferWearPeriodTitleForBrand(nextBrand)
+                            if (inferred) {
+                              const days =
+                                lensTypeToWearPeriodMap[
+                                  inferred as keyof typeof lensTypeToWearPeriodMap
+                                ]
+                              return {
+                                ...prev,
+                                brand: nextBrand,
+                                wearPeriodTitle: inferred,
+                                wearPeriodDays: days
+                              }
+                            }
+                            return { ...prev, brand: nextBrand }
+                          })
                         }
                         isClearable
                       />
@@ -389,13 +442,7 @@ export const LensEditModal = ({
                   {isEditing ? (
                     <select
                       value={editData?.wearPeriodTitle || ''}
-                      onChange={(e) =>
-                        setEditData((prev) =>
-                          prev
-                            ? { ...prev, wearPeriodTitle: e.target.value }
-                            : null
-                        )
-                      }
+                      onChange={(e) => setWearPeriodByTitle(e.target.value)}
                       className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:px-4 sm:py-3 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                     >
                       <option value="Ежедневные">Ежедневные</option>
@@ -416,27 +463,35 @@ export const LensEditModal = ({
                     Период использования
                   </label>
                   {isEditing ? (
-                    <input
-                      type="number"
-                      value={editData?.usagePeriodDays ?? 0}
-                      onChange={(e) => {
-                        const v = e.target.value
-                        const parsed = v === '' ? 0 : Number(v)
-                        setEditData((prev) =>
-                          prev
-                            ? {
-                                ...prev,
-                                usagePeriodDays: Number.isFinite(parsed)
-                                  ? Math.max(0, parsed)
-                                  : 0
-                              }
-                            : null
-                        )
-                      }}
-                      className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:px-4 sm:py-3 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                      min="0"
-                      max="365"
-                    />
+                    <>
+                      <input
+                        type="number"
+                        value={editData?.usagePeriodDays ?? 0}
+                        onChange={(e) => {
+                          const v = e.target.value
+                          const parsed = v === '' ? 0 : Number(v)
+                          setEditData((prev) =>
+                            prev
+                              ? {
+                                  ...prev,
+                                  usagePeriodDays: Number.isFinite(parsed)
+                                    ? Math.max(0, parsed)
+                                    : 0
+                                }
+                              : null
+                          )
+                          if (usageError) setUsageError(null)
+                        }}
+                        className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:px-4 sm:py-3 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                        min="0"
+                        max="365"
+                      />
+                      {usageError ? (
+                        <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                          {usageError}
+                        </p>
+                      ) : null}
+                    </>
                   ) : (
                     <p className="mt-2 text-base font-medium text-gray-900 sm:text-lg dark:text-white">
                       {lens.usagePeriodDays} д.
@@ -460,14 +515,16 @@ export const LensEditModal = ({
                     <select
                       value={editData?.status || ''}
                       onChange={(e) =>
-                        setEditData((prev) =>
-                          prev
-                            ? {
-                                ...prev,
-                                status: e.target.value as Lens['status']
-                              }
-                            : null
-                        )
+                        setEditData((prev) => {
+                          if (!prev) return null
+                          const next = e.target.value as Lens['status']
+                          return {
+                            ...prev,
+                            status: next,
+                            openedDate:
+                              next === 'unopened' ? null : prev.openedDate
+                          }
+                        })
                       }
                       className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:px-4 sm:py-3 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                     >
