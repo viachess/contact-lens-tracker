@@ -569,21 +569,53 @@ export const LensEditModal = ({
                       Дата открытия
                     </label>
                     {isEditing ? (
-                      <input
-                        type="date"
-                        value={
-                          editData?.openedDate
-                            ? editData.openedDate.split('T')[0]
-                            : ''
-                        }
-                        onChange={(e) => {
-                          const date = e.target.value || null
-                          setEditData((prev) =>
-                            prev ? { ...prev, openedDate: date } : null
-                          )
-                        }}
-                        className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:px-4 sm:py-3 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                      />
+                      <div className="mt-2 flex items-center gap-2">
+                        <input
+                          type="date"
+                          value={
+                            editData?.openedDate
+                              ? editData.openedDate.split('T')[0]
+                              : ''
+                          }
+                          onChange={(e) => {
+                            const date = e.target.value || ''
+                            setEditData((prev) => {
+                              if (!prev) return null
+                              const nextOpenedDate = date ? date : null
+                              const nextStatus = date
+                                ? prev.status === 'unopened'
+                                  ? 'opened'
+                                  : prev.status
+                                : 'unopened'
+                              return {
+                                ...prev,
+                                openedDate: nextOpenedDate,
+                                status: nextStatus
+                              }
+                            })
+                          }}
+                          className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:px-4 sm:py-3 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                        />
+                        {editData?.openedDate && (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setEditData((prev) =>
+                                prev
+                                  ? {
+                                      ...prev,
+                                      openedDate: null,
+                                      status: 'unopened'
+                                    }
+                                  : null
+                              )
+                            }
+                            className="shrink-0 rounded-xl border-2 border-gray-300 px-3 py-2.5 text-sm font-semibold text-gray-700 transition-all hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+                          >
+                            Очистить
+                          </button>
+                        )}
+                      </div>
                     ) : (
                       <p className="mt-2 text-base font-medium text-gray-900 sm:text-lg dark:text-white">
                         {lens.openedDate

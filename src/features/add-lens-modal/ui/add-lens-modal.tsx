@@ -23,8 +23,6 @@ export const AddLensModal = ({
   onAdd,
   mode = 'single'
 }: AddLensModalProps) => {
-  console.log('AddLensModal rendered')
-
   const DEFAULT_PACK_PAIR_COUNT = 3
 
   const [formData, setFormData] = useState<Omit<Lens, 'id'>>({
@@ -389,15 +387,36 @@ export const AddLensModal = ({
                   <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     Дата открытия
                   </label>
-                  <input
-                    type="date"
-                    value={formData.openedDate || ''}
-                    onChange={(e) => {
-                      const date = e.target.value || null
-                      updateFormData('openedDate', date)
-                    }}
-                    className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:px-4 sm:py-3 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                  />
+                  <div className="mt-2 flex items-center gap-2">
+                    <input
+                      type="date"
+                      value={formData.openedDate || ''}
+                      onChange={(e) => {
+                        const date = e.target.value || null
+                        updateFormData('openedDate', date)
+                        if (date) {
+                          if (formData.status === 'unopened') {
+                            updateFormData('status', 'opened')
+                          }
+                        } else {
+                          updateFormData('status', 'unopened')
+                        }
+                      }}
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:px-4 sm:py-3 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                    />
+                    {formData.openedDate && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          updateFormData('openedDate', null)
+                          updateFormData('status', 'unopened')
+                        }}
+                        className="shrink-0 rounded-xl border-2 border-gray-300 px-3 py-2.5 text-sm font-semibold text-gray-700 transition-all hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+                      >
+                        Очистить
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
