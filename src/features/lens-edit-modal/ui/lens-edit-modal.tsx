@@ -16,7 +16,8 @@ import {
 } from '@/app/store/slices/lens-management-slice'
 import {
   MANUFACTURER_BRANDS_MAP,
-  inferWearPeriodTitleForBrand
+  inferWearPeriodTitleForBrand,
+  BrandWithWearPeriod
 } from '@/shared/constants/lens-manufacturers'
 import { selectUser } from '@/app/store/slices/auth-slice'
 import { parseDate } from '@/shared/lib'
@@ -89,7 +90,8 @@ export const LensEditModal = ({
   const manufacturerToBrands = useMemo(() => {
     const map = new Map<string, Set<string>>()
     Object.entries(MANUFACTURER_BRANDS_MAP).forEach(([m, brands]) => {
-      map.set(m, new Set(brands))
+      const names = (brands as BrandWithWearPeriod[]).map((b) => b.name)
+      map.set(m, new Set(names))
     })
     return map
   }, [])
