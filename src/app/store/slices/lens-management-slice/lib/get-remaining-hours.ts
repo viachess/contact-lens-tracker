@@ -1,7 +1,7 @@
 import { getEndOfLocalDay, parseDate } from '@/shared/lib'
 import { Lens } from '../types'
 import { isLensExpired } from './is-lens-expired'
-import { calculateTotalUsageMsWithExcessDeduction } from './calculate-total-usage-ms'
+import { calculateTotalUsageMs } from './calculate-total-usage-ms'
 
 export const getRemainingHours = (lens: Lens | null): number | null => {
   if (!lens || !lens.openedDate) return null
@@ -14,7 +14,7 @@ export const getRemainingHours = (lens: Lens | null): number | null => {
     const remainingMs = Math.max(0, endOfDay.getTime() - now.getTime())
     return Math.ceil(remainingMs / (60 * 60 * 1000))
   }
-  const totalUsageMs = calculateTotalUsageMsWithExcessDeduction(lens)
+  const totalUsageMs = calculateTotalUsageMs(lens)
   const msPerDay = 24 * 60 * 60 * 1000
   const usedDays = Math.floor(totalUsageMs / msPerDay)
   const usedMsIntoDay = totalUsageMs - usedDays * msPerDay

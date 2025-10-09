@@ -3,7 +3,6 @@ import { nanoid } from 'nanoid'
 import { Lens, LensManagementState } from './types'
 import { getSupabaseClient } from '@/shared/lib/supabase-client'
 import { RootState } from '@/app/store/types'
-import { calculateTotalUsageMsWithExcessDeduction } from './lib/calculate-total-usage-ms'
 
 const initialState: LensManagementState = {
   lenses: [],
@@ -290,11 +289,8 @@ export const resumeLensForUser = createAsyncThunk<
         }
       }
 
-      // Use the new calculation with excess deduction for more accurate checking
-      const totalUsageMs = calculateTotalUsageMsWithExcessDeduction(existing)
-      const usageDays = Math.floor(totalUsageMs / msPerDay)
-
-      if (usageDays >= wearDays) {
+      // Fallback: accumulated usage in ms exceeds wear period days
+      if (accumulated >= wearDays * msPerDay) {
         const { error: expErr } = await supabase
           .from('lenses')
           .update({ status: 'expired', user_id: userId })
