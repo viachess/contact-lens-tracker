@@ -1,4 +1,6 @@
 import { useEffect } from 'react'
+import { useAppSelector } from '@/app/store/hooks'
+import { selectUser } from '@/app/store/slices/auth-slice/selectors'
 
 // Replace with your server URL
 const SERVER_ORIGIN =
@@ -54,39 +56,50 @@ async function subscribeToPush(): Promise<void> {
 }
 
 export function PushProvider({ children }: { children: React.ReactNode }) {
+  const user = useAppSelector(selectUser)
+
   useEffect(() => {
-    // iOS Safari requires a user gesture to show the permission prompt reliably
-    const handler = async () => {
+    // Only prompt authenticated users for push notifications
+    if (!user?.id) return
+
+    // iOS 26+ requires that Notification.requestPermission() is called
+    // synchronously within the user gesture handler (no async ops before it)
+    const handler = () => {
+      if (!('Notification' in window)) return
+
       try {
-        if ('Notification' in window && Notification.permission === 'default') {
-          const result = await Notification.requestPermission()
-          if (result === 'granted') {
-            await subscribeToPush()
-          }
+        if (Notification.permission === 'default') {
+          // MUST call requestPermission() synchronously to preserve user gesture on iOS 26+
+          Notification.requestPermission().then((result) => {
+            if (result === 'granted') {
+              subscribeToPush()
+            }
+          })
         } else if (Notification.permission === 'granted') {
-          await subscribeToPush()
+          subscribeToPush()
         }
-      } catch {}
-      window.removeEventListener('click', handler)
-      window.removeEventListener('touchend', handler)
+      } catch {
+        // Ignore errors
+      }
     }
+
+    // Use once:true to automatically remove listeners after first trigger
     window.addEventListener('click', handler, { once: true })
     window.addEventListener('touchend', handler, { once: true })
 
     // As a fallback, try after load if already granted
-    ;(async () => {
-      if (
-        typeof Notification !== 'undefined' &&
-        Notification.permission === 'granted'
-      ) {
-        await subscribeToPush()
-      }
-    })()
+    if (
+      typeof Notification !== 'undefined' &&
+      Notification.permission === 'granted'
+    ) {
+      subscribeToPush()
+    }
+
     return () => {
       window.removeEventListener('click', handler)
       window.removeEventListener('touchend', handler)
     }
-  }, [])
+  }, [user?.id])
 
   return <>{children}</>
 }

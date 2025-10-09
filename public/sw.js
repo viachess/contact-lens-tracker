@@ -1,5 +1,5 @@
 // basic service worker for offline cache
-const CACHE = 'lens-tracker-cache-v2'
+const CACHE = 'lens-tracker-cache-v3'
 const ASSETS = ['/', '/index.html', '/favicon.svg']
 
 self.addEventListener('install', (event) => {
@@ -8,6 +8,8 @@ self.addEventListener('install', (event) => {
       return cache.addAll(ASSETS)
     })
   )
+  // Force the waiting service worker to become active immediately (iOS 26 requirement)
+  self.skipWaiting()
 })
 
 self.addEventListener('activate', (event) => {
@@ -15,6 +17,7 @@ self.addEventListener('activate', (event) => {
     caches
       .keys()
       .then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
+      .then(() => self.clients.claim())
   )
 })
 
