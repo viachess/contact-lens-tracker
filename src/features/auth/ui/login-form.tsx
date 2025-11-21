@@ -42,7 +42,7 @@ export const LoginForm = () => {
       hasRedirectedRef.current = true
       navigate(to, { replace: true })
     }
-  }, [status, navigate, location.state])
+  }, [status, navigate, location.state, location.search])
 
   const {
     register,
@@ -95,7 +95,7 @@ export const LoginForm = () => {
           {status === 'authenticating' ? (
             <span
               aria-label="loading"
-              className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"
+              className="inline-block size-4 animate-spin rounded-full border-2 border-white border-t-transparent"
             />
           ) : (
             'Войти'

@@ -70,12 +70,12 @@ export const ProfilePage: React.FC = () => {
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
       <h1 className="mb-6 text-3xl font-bold">Профиль</h1>
-      <div className="rounded-md border p-4 bg-[var(--color-surface)] text-[var(--color-surface-text)] dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100">
+      <div className="rounded-md border bg-[var(--color-surface)] p-4 text-[var(--color-surface-text)] dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100">
         <p className="text-sm text-gray-500 dark:text-gray-400">Email</p>
         <p className="text-lg">{user?.email ?? '—'}</p>
       </div>
 
-      <div className="mt-8 rounded-md border p-4 bg-[var(--color-surface)] text-[var(--color-surface-text)] border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100">
+      <div className="mt-8 rounded-md border border-gray-200 bg-[var(--color-surface)] p-4 text-[var(--color-surface-text)] dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-semibold dark:text-gray-100">
             Тема приложения
@@ -218,7 +218,7 @@ export const ProfilePage: React.FC = () => {
           <button
             onClick={handleSave}
             className={
-              'rounded px-4 py-2 text-sm hover:brightness-95 bg-[var(--color-button-primary)] text-[var(--color-button-primary-text)] dark:bg-blue-500 dark:hover:bg-blue-600'
+              'rounded bg-[var(--color-button-primary)] px-4 py-2 text-sm text-[var(--color-button-primary-text)] hover:brightness-95 dark:bg-blue-500 dark:hover:bg-blue-600'
             }
           >
             Сохранить тему
@@ -227,7 +227,7 @@ export const ProfilePage: React.FC = () => {
           <button
             onClick={handleReset}
             className={
-              'rounded px-4 py-2 text-sm hover:brightness-95 bg-[var(--color-button-danger)] text-[var(--color-button-danger-text)] dark:bg-red-500 dark:hover:bg-red-600'
+              'rounded bg-[var(--color-button-danger)] px-4 py-2 text-sm text-[var(--color-button-danger-text)] hover:brightness-95 dark:bg-red-500 dark:hover:bg-red-600'
             }
           >
             Сбросить тему

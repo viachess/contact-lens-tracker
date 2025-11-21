@@ -28,11 +28,11 @@ export const Navigation = () => {
   }
 
   return (
-    <nav className="fixed inset-x-0 top-0 z-50 shadow-md bg-[var(--color-navbar)] text-[var(--color-navbar-text)] dark:bg-gray-900 dark:text-white">
+    <nav className="fixed inset-x-0 top-0 z-50 bg-[var(--color-navbar)] text-[var(--color-navbar-text)] shadow-md dark:bg-gray-900 dark:text-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Desktop Navigation - Left side with Logo */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden items-center gap-6 md:flex">
             <Link to="/" className="text-xl font-bold hover:opacity-80">
               Lens Tracker
             </Link>
@@ -57,7 +57,7 @@ export const Navigation = () => {
             <div className="hidden md:block">
               <button
                 onClick={handleToggleTheme}
-                className="inline-flex items-center rounded-md border px-3 py-2 text-sm font-medium shadow-sm transition-opacity focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 hover:opacity-80"
+                className="inline-flex items-center rounded-md border px-3 py-2 text-sm font-medium shadow-sm transition-opacity hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
               >
                 {theme === 'dark' ? '☀️' : '🌙'}
               </button>
@@ -69,7 +69,7 @@ export const Navigation = () => {
                   to="/profile"
                   className="inline-flex items-center rounded-md border px-3 py-2 text-sm font-medium transition-opacity hover:opacity-80"
                 >
-                  <ProfileIcon className="size-5 dark:text-gray-300 dark:fill-gray-300" />
+                  <ProfileIcon className="size-5 dark:fill-gray-300 dark:text-gray-300" />
                 </Link>
               </div>
             )}
@@ -93,10 +93,10 @@ export const Navigation = () => {
           </div>
 
           {/* Mobile menu button and logo */}
-          <div className="md:hidden flex justify-between items-center w-full">
+          <div className="flex w-full items-center justify-between md:hidden">
             <Link
               to="/"
-              className="text-lg font-bold hover:opacity-80 justify-self-start"
+              className="justify-self-start text-lg font-bold hover:opacity-80"
             >
               Lens Tracker
             </Link>
@@ -143,13 +143,13 @@ export const Navigation = () => {
 
       {/* Mobile menu */}
       <div className={cn(isMenuOpen ? 'block' : 'hidden', 'md:hidden')}>
-        <div className="space-y-1 border-t border-gray-200 px-2 pb-3 pt-2 sm:px-3 dark:border-gray-700 text-left">
+        <div className="space-y-1 border-t border-gray-200 px-2 pb-3 pt-2 text-left sm:px-3 dark:border-gray-700">
           {user &&
             routes.map((item) => (
               <Link
                 key={item.title}
                 to={item.path}
-                className="block rounded-md px-3 py-2 text-base font-medium transition-opacity hover:opacity-80 text-left"
+                className="block rounded-md px-3 py-2 text-left text-base font-medium transition-opacity hover:opacity-80"
                 onClick={closeMenu}
               >
                 {item.title}
@@ -159,7 +159,7 @@ export const Navigation = () => {
           {/* Theme toggle button - Mobile */}
           <button
             onClick={handleToggleTheme}
-            className="block w-full rounded-md px-3 py-2 text-base font-medium transition-opacity hover:opacity-80 text-left"
+            className="block w-full rounded-md px-3 py-2 text-left text-base font-medium transition-opacity hover:opacity-80"
           >
             {theme === 'dark' ? '☀️ Light mode' : '🌙 Dark mode'}
           </button>
@@ -167,7 +167,7 @@ export const Navigation = () => {
             <Link
               to="/profile"
               onClick={closeMenu}
-              className="flex items-center gap-2 rounded-md px-3 py-2 text-base font-medium transition-opacity hover:opacity-80 text-left"
+              className="flex items-center gap-2 rounded-md px-3 py-2 text-left text-base font-medium transition-opacity hover:opacity-80"
             >
               <ProfileIcon className="size-5 dark:text-gray-300" />
               Профиль
@@ -179,7 +179,7 @@ export const Navigation = () => {
                 dispatch(logout())
                 closeMenu()
               }}
-              className="block w-full rounded-md px-3 py-2 text-base font-medium transition-opacity hover:opacity-80 text-left"
+              className="block w-full rounded-md px-3 py-2 text-left text-base font-medium transition-opacity hover:opacity-80"
             >
               Выйти
             </button>

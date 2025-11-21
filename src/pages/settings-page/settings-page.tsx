@@ -114,7 +114,7 @@ export const SettingsPage = () => {
         Настройки
       </h1>
 
-      <div className="rounded-xl p-6 shadow-xl border border-gray-200 bg-white text-gray-900 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100">
+      <div className="rounded-xl border border-gray-200 bg-white p-6 text-gray-900 shadow-xl dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100">
         <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-lg font-medium text-gray-900 dark:text-white">
             Мои линзы
@@ -122,13 +122,13 @@ export const SettingsPage = () => {
           <div className="flex w-full gap-2 sm:w-auto">
             <button
               onClick={handleAddLens}
-              className="w-full rounded-lg px-4 py-2 text-sm font-medium transition-colors hover:brightness-95 sm:w-auto bg-[var(--color-button-primary)] text-[var(--color-button-primary-text)] dark:bg-blue-500 dark:hover:bg-blue-600"
+              className="w-full rounded-lg bg-[var(--color-button-primary)] px-4 py-2 text-sm font-medium text-[var(--color-button-primary-text)] transition-colors hover:brightness-95 sm:w-auto dark:bg-blue-500 dark:hover:bg-blue-600"
             >
               Добавить линзу
             </button>
             <button
               onClick={handleAddPack}
-              className="w-full rounded-lg px-4 py-2 text-sm font-medium transition-colors hover:brightness-95 sm:w-auto bg-[var(--color-button-secondary)] text-[var(--color-button-secondary-text)] dark:bg-blue-500 dark:hover:bg-blue-600"
+              className="w-full rounded-lg bg-[var(--color-button-secondary)] px-4 py-2 text-sm font-medium text-[var(--color-button-secondary-text)] transition-colors hover:brightness-95 sm:w-auto dark:bg-blue-500 dark:hover:bg-blue-600"
             >
               Добавить упаковку
             </button>
@@ -141,7 +141,7 @@ export const SettingsPage = () => {
             return (
               <div
                 key={lens.id}
-                className="cursor-pointer rounded-lg p-4 transition-colors border border-gray-200 hover:brightness-95 bg-white text-gray-900 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600 dark:hover:bg-gray-700/50 dark:text-gray-100"
+                className="cursor-pointer rounded-lg border border-gray-200 bg-white p-4 text-gray-900 transition-colors hover:brightness-95 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:hover:border-gray-600 dark:hover:bg-gray-700/50"
                 onClick={() => handleLensClick(lens)}
               >
                 <div className="flex flex-col gap-3">

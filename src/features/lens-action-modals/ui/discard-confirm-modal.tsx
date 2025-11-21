@@ -22,7 +22,7 @@ export const DiscardConfirmModal = () => {
   return (
     <ModalContainer name={MODAL_IDS.LENS_DISCARD_CONFIRM}>
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 sm:p-6">
-        <div className="w-full max-w-md rounded-2xl p-6 shadow-xl bg-[var(--color-surface)] text-[var(--color-surface-text)] dark:bg-gray-800 dark:text-gray-100">
+        <div className="w-full max-w-md rounded-2xl bg-[var(--color-surface)] p-6 text-[var(--color-surface-text)] shadow-xl dark:bg-gray-800 dark:text-gray-100">
           <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
             Утилизировать линзы?
           </h3>
@@ -39,7 +39,7 @@ export const DiscardConfirmModal = () => {
             </button>
             <button
               onClick={handleConfirm}
-              className="rounded-lg px-4 py-2 hover:brightness-95 bg-[var(--color-button-danger)] text-[var(--color-button-danger-text)] dark:bg-red-500 dark:hover:bg-red-600"
+              className="rounded-lg bg-[var(--color-button-danger)] px-4 py-2 text-[var(--color-button-danger-text)] hover:brightness-95 dark:bg-red-500 dark:hover:bg-red-600"
             >
               Утилизировать
             </button>

@@ -29,7 +29,7 @@ export const CurrentLensDetails = () => {
         <div className="text-lg font-medium">Сейчас не надеты линзы</div>
         <Link
           to="/lenses"
-          className="inline-flex self-start items-center gap-2 px-4 py-2 rounded transition-colors font-medium shadow w-auto max-w-max hover:brightness-95 bg-[var(--color-button-primary)] text-[var(--color-button-primary-text)] dark:bg-blue-400 dark:hover:bg-blue-300 dark:text-white"
+          className="inline-flex w-auto max-w-max items-center gap-2 self-start rounded bg-[var(--color-button-primary)] px-4 py-2 font-medium text-[var(--color-button-primary-text)] shadow transition-colors hover:brightness-95 dark:bg-blue-400 dark:text-white dark:hover:bg-blue-300"
         >
           К списку линз
         </Link>
@@ -120,7 +120,7 @@ export const CurrentLensDetails = () => {
 
   return (
     <div className="max-w-md">
-      <div className="flex flex-col gap-2 rounded-xl p-6 shadow-xl border border-gray-200 bg-[var(--color-surface)] text-[var(--color-surface-text)] dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100">
+      <div className="flex flex-col gap-2 rounded-xl border border-gray-200 bg-[var(--color-surface)] p-6 text-[var(--color-surface-text)] shadow-xl dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100">
         <>
           <div>Сейчас надеты</div>
           <div className="flex items-center gap-2">
@@ -155,7 +155,7 @@ export const CurrentLensDetails = () => {
           <div className="mt-4 flex justify-between">
             <button
               onClick={openDiscardModal}
-              className="flex items-center gap-2 rounded-lg px-4 py-2 font-medium hover:brightness-95 bg-[var(--color-button-danger)] text-[var(--color-button-danger-text)] dark:bg-red-500 dark:hover:bg-red-600 dark:text-white"
+              className="flex items-center gap-2 rounded-lg bg-[var(--color-button-danger)] px-4 py-2 font-medium text-[var(--color-button-danger-text)] hover:brightness-95 dark:bg-red-500 dark:text-white dark:hover:bg-red-600"
             >
               <StopSignIcon className="size-5" />
               <span className="font-medium">Утилизировать</span>
@@ -164,7 +164,7 @@ export const CurrentLensDetails = () => {
             {!isExpired && status === 'in-use' && (
               <button
                 onClick={openTakeOffModal}
-                className="flex items-center rounded-lg px-4 py-2 font-medium hover:brightness-95 bg-[var(--color-button-secondary)] text-[var(--color-button-secondary-text)] dark:bg-blue-500 dark:hover:bg-blue-600 dark:text-white"
+                className="flex items-center rounded-lg bg-[var(--color-button-secondary)] px-4 py-2 font-medium text-[var(--color-button-secondary-text)] hover:brightness-95 dark:bg-blue-500 dark:text-white dark:hover:bg-blue-600"
               >
                 <span className="font-medium">Снять</span>
               </button>

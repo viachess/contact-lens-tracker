@@ -23,7 +23,7 @@ export const PauseConfirmModal = memo(() => {
   return (
     <ModalContainer name={MODAL_IDS.LENS_TAKE_OFF_CONFIRM}>
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 sm:p-6">
-        <div className="w-full max-w-md rounded-2xl p-6 shadow-xl bg-[var(--color-surface)] text-[var(--color-surface-text)] dark:bg-gray-800 dark:text-gray-100">
+        <div className="w-full max-w-md rounded-2xl bg-[var(--color-surface)] p-6 text-[var(--color-surface-text)] shadow-xl dark:bg-gray-800 dark:text-gray-100">
           <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
             Снять линзы?
           </h3>
@@ -40,7 +40,7 @@ export const PauseConfirmModal = memo(() => {
             </button>
             <button
               onClick={handleConfirm}
-              className="rounded-lg px-4 py-2 hover:brightness-95 bg-[var(--color-button-secondary)] text-[var(--color-button-secondary-text)] dark:bg-blue-500 dark:hover:bg-blue-600"
+              className="rounded-lg bg-[var(--color-button-secondary)] px-4 py-2 text-[var(--color-button-secondary-text)] hover:brightness-95 dark:bg-blue-500 dark:hover:bg-blue-600"
             >
               Снять
             </button>

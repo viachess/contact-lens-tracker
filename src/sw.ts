@@ -61,17 +61,19 @@ sw.addEventListener('push', (event) => {
 sw.addEventListener('notificationclick', (event) => {
   event.notification.close()
   event.waitUntil(
-    sw.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-      // If a window is already open, focus it
-      for (const client of clientList) {
-        if ('focus' in client) {
-          return client.focus()
+    sw.clients
+      .matchAll({ type: 'window', includeUncontrolled: true })
+      .then((clientList) => {
+        // If a window is already open, focus it
+        for (const client of clientList) {
+          if ('focus' in client) {
+            return client.focus()
+          }
         }
-      }
-      // Otherwise open a new window
-      if (sw.clients.openWindow) {
-        return sw.clients.openWindow('/')
-      }
-    })
+        // Otherwise open a new window
+        if (sw.clients.openWindow) {
+          return sw.clients.openWindow('/')
+        }
+      })
   )
 })
