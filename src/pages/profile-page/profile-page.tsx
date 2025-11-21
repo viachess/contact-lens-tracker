@@ -1,38 +1,38 @@
-import { useAppDispatch, useAppSelector } from '@/app/store/hooks'
+import { useAppDispatch, useAppSelector } from '@/app/store/hooks';
 import {
   DEFAULT_THEME_COLORS,
   resetThemeColors,
   setThemeColors,
   toggleTheme
-} from '@/app/store/slices/app-slice'
+} from '@/app/store/slices/app-slice';
 import {
   selectTheme,
   selectThemeColors
-} from '@/app/store/slices/app-slice/selectors'
-import { selectUser } from '@/app/store/slices/auth-slice/selectors'
+} from '@/app/store/slices/app-slice/selectors';
+import { selectUser } from '@/app/store/slices/auth-slice/selectors';
 import {
   getSupabaseClient,
   isSupabaseConfigured
-} from '@/shared/lib/supabase-client'
-import React, { useMemo, useState } from 'react'
+} from '@/shared/lib/supabase-client';
+import React, { useMemo, useState } from 'react';
 
 export const ProfilePage: React.FC = () => {
-  const dispatch = useAppDispatch()
-  const user = useAppSelector(selectUser)
-  const mode = useAppSelector(selectTheme)
-  const themeColors = useAppSelector(selectThemeColors)
-  const [localColors, setLocalColors] = useState(themeColors)
+  const dispatch = useAppDispatch();
+  const user = useAppSelector(selectUser);
+  const mode = useAppSelector(selectTheme);
+  const themeColors = useAppSelector(selectThemeColors);
+  const [localColors, setLocalColors] = useState(themeColors);
   const supabase = useMemo(
     () => (isSupabaseConfigured ? getSupabaseClient() : null),
     []
-  )
+  );
 
   const handleColorChange = (key: keyof typeof localColors, value: string) => {
-    setLocalColors((prev) => ({ ...prev, [key]: value }))
-  }
+    setLocalColors((prev) => ({ ...prev, [key]: value }));
+  };
 
   const handleSave = async () => {
-    dispatch(setThemeColors(localColors))
+    dispatch(setThemeColors(localColors));
     if (supabase && user?.id) {
       await supabase
         .from('user_settings')
@@ -41,15 +41,15 @@ export const ProfilePage: React.FC = () => {
           theme_colors: localColors,
           updated_at: new Date().toISOString()
         })
-        .select()
+        .select();
     } else {
-      localStorage.setItem('user_theme_colors', JSON.stringify(localColors))
+      localStorage.setItem('user_theme_colors', JSON.stringify(localColors));
     }
-  }
+  };
 
   const handleReset = async () => {
-    dispatch(resetThemeColors())
-    setLocalColors(DEFAULT_THEME_COLORS)
+    dispatch(resetThemeColors());
+    setLocalColors(DEFAULT_THEME_COLORS);
     if (supabase && user?.id) {
       await supabase
         .from('user_settings')
@@ -58,14 +58,14 @@ export const ProfilePage: React.FC = () => {
           theme_colors: DEFAULT_THEME_COLORS,
           updated_at: new Date().toISOString()
         })
-        .select()
+        .select();
     } else {
       localStorage.setItem(
         'user_theme_colors',
         JSON.stringify(DEFAULT_THEME_COLORS)
-      )
+      );
     }
-  }
+  };
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
@@ -235,5 +235,5 @@ export const ProfilePage: React.FC = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

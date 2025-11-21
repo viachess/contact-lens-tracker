@@ -7,5 +7,5 @@ export const getEndOfLocalDay = (date: Date) => {
     59,
     59,
     999
-  )
-}
+  );
+};

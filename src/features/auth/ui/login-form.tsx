@@ -1,58 +1,60 @@
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect, useRef } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
-import { useAppDispatch, useAppSelector } from '@/app/store/hooks'
-import { loginWithEmail } from '@/app/store/slices/auth-slice'
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect, useRef } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '@/app/store/hooks';
+import { loginWithEmail } from '@/app/store/slices/auth-slice';
 import {
   selectAuthStatus,
   selectAuthError
-} from '@/app/store/slices/auth-slice/selectors'
-import { isSupabaseConfigured } from '@/shared/lib/supabase-client'
+} from '@/app/store/slices/auth-slice/selectors';
+import { isSupabaseConfigured } from '@/shared/lib/supabase-client';
 
 const schema = z.object({
   email: z.email({ message: 'Введите корректный email' }),
   password: z.string().min(1, { message: 'Введите пароль' })
-})
+});
 
-type FormValues = z.infer<typeof schema>
+type FormValues = z.infer<typeof schema>;
 
 export const LoginForm = () => {
-  const dispatch = useAppDispatch()
-  const status = useAppSelector(selectAuthStatus)
-  const error = useAppSelector(selectAuthError)
-  const navigate = useNavigate()
-  const location = useLocation()
+  const dispatch = useAppDispatch();
+  const status = useAppSelector(selectAuthStatus);
+  const error = useAppSelector(selectAuthError);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const hasRedirectedRef = useRef(false)
+  const hasRedirectedRef = useRef(false);
 
   useEffect(() => {
     if (status === 'authenticated' && !hasRedirectedRef.current) {
       const from = (location.state as { from?: { pathname?: string } } | null)
-        ?.from
-      let to = from?.pathname
+        ?.from;
+      let to = from?.pathname;
       // Fallback to ?redirect query param
       if (!to) {
-        const params = new URLSearchParams(location.search)
-        const redirect = params.get('redirect')
-        if (redirect) to = redirect
+        const params = new URLSearchParams(location.search);
+        const redirect = params.get('redirect');
+        if (redirect) to = redirect;
       }
-      to = to || '/'
-      hasRedirectedRef.current = true
-      navigate(to, { replace: true })
+      to = to || '/';
+      hasRedirectedRef.current = true;
+      navigate(to, { replace: true });
     }
-  }, [status, navigate, location.state, location.search])
+  }, [status, navigate, location.state, location.search]);
 
   const {
     register,
     handleSubmit,
     formState: { errors, isValid, isSubmitting }
-  } = useForm<FormValues>({ resolver: zodResolver(schema), mode: 'onChange' })
+  } = useForm<FormValues>({ resolver: zodResolver(schema), mode: 'onChange' });
 
   const onSubmit = (values: FormValues) => {
-    dispatch(loginWithEmail({ email: values.email, password: values.password }))
-  }
+    dispatch(
+      loginWithEmail({ email: values.email, password: values.password })
+    );
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -103,5 +105,5 @@ export const LoginForm = () => {
         </button>
       </div>
     </form>
-  )
-}
+  );
+};

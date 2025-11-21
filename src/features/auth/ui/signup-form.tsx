@@ -1,27 +1,27 @@
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useAppDispatch, useAppSelector } from '@/app/store/hooks'
-import { signupWithEmail } from '@/app/store/slices/auth-slice'
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useAppDispatch, useAppSelector } from '@/app/store/hooks';
+import { signupWithEmail } from '@/app/store/slices/auth-slice';
 import {
   selectAuthError,
   selectAuthStatus
-} from '@/app/store/slices/auth-slice/selectors'
-import { useNavigate } from 'react-router-dom'
-import { isSupabaseConfigured } from '@/shared/lib/supabase-client'
+} from '@/app/store/slices/auth-slice/selectors';
+import { useNavigate } from 'react-router-dom';
+import { isSupabaseConfigured } from '@/shared/lib/supabase-client';
 
 const schema = z.object({
   email: z.email({ message: 'Введите корректный email' }),
   password: z.string().min(6, { message: 'Минимум 6 символов' })
-})
+});
 
-type FormValues = z.infer<typeof schema>
+type FormValues = z.infer<typeof schema>;
 
 export const SignUpForm = () => {
-  const dispatch = useAppDispatch()
-  const status = useAppSelector(selectAuthStatus)
-  const error = useAppSelector(selectAuthError)
-  const navigate = useNavigate()
+  const dispatch = useAppDispatch();
+  const status = useAppSelector(selectAuthStatus);
+  const error = useAppSelector(selectAuthError);
+  const navigate = useNavigate();
 
   const {
     register,
@@ -30,20 +30,20 @@ export const SignUpForm = () => {
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
     mode: 'onChange'
-  })
+  });
 
   const onSubmit = async (values: FormValues) => {
     try {
       const res = await dispatch(
         signupWithEmail({ email: values.email, password: values.password })
-      ).unwrap()
+      ).unwrap();
       // Regardless of whether Supabase returns a user or null (email confirmation on),
       // redirect to the confirmation page.
-      navigate('/confirm-email')
+      navigate('/confirm-email');
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
-  }
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -90,5 +90,5 @@ export const SignUpForm = () => {
         </button>
       </div>
     </form>
-  )
-}
+  );
+};

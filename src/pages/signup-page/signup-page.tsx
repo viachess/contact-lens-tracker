@@ -1,5 +1,5 @@
-import { SignUpForm } from '@/features/auth/ui/signup-form'
-import { Link } from 'react-router-dom'
+import { SignUpForm } from '@/features/auth/ui/signup-form';
+import { Link } from 'react-router-dom';
 
 export const SignUpPage = () => {
   return (
@@ -13,5 +13,5 @@ export const SignUpPage = () => {
         </Link>
       </div>
     </div>
-  )
-}
+  );
+};

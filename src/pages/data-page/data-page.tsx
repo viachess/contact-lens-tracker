@@ -1,64 +1,64 @@
-import { useMemo, useState } from 'react'
-import { useAppSelector } from '@/app/store/hooks'
-import { selectAllLenses } from '@/app/store/slices/lens-management-slice/selectors'
-import Select from 'react-select'
+import { useMemo, useState } from 'react';
+import { useAppSelector } from '@/app/store/hooks';
+import { selectAllLenses } from '@/app/store/slices/lens-management-slice/selectors';
+import Select from 'react-select';
 import {
   XYChart,
   AnimatedBarSeries,
   AnimatedAxis,
   Tooltip
-} from '@visx/xychart'
+} from '@visx/xychart';
 
-type Timeframe = '1D' | '1M' | '1Y'
+type Timeframe = '1D' | '1M' | '1Y';
 
 type BarDatum = {
-  x: string
-  y: number
-}
+  x: string;
+  y: number;
+};
 
 const chartTheme = {
   backgroundColor: 'transparent',
   colors: ['#0ea5e9'],
   gridColor: '#e5e7eb'
-}
+};
 
 function generateMockData(timeframe: Timeframe): BarDatum[] {
-  const now = new Date()
+  const now = new Date();
   if (timeframe === '1D') {
     return Array.from({ length: 24 }, (_, i) => {
-      const label = `${i}`.padStart(2, '0')
+      const label = `${i}`.padStart(2, '0');
       return {
         x: label,
         y: Math.max(0, Math.round(6 * Math.sin((i / 24) * Math.PI) + 4))
-      }
-    })
+      };
+    });
   }
   if (timeframe === '1M') {
     return Array.from({ length: 30 }, (_, i) => {
-      const d = new Date(now)
-      d.setDate(now.getDate() - (29 - i))
-      const label = `${d.getMonth() + 1}/${d.getDate()}`
-      return { x: label, y: Math.max(0, Math.round(4 + 3 * Math.sin(i / 6))) }
-    })
+      const d = new Date(now);
+      d.setDate(now.getDate() - (29 - i));
+      const label = `${d.getMonth() + 1}/${d.getDate()}`;
+      return { x: label, y: Math.max(0, Math.round(4 + 3 * Math.sin(i / 6))) };
+    });
   }
   // 1Y
   return Array.from({ length: 12 }, (_, i) => {
-    const d = new Date(now)
-    d.setMonth(now.getMonth() - (11 - i))
-    const label = d.toLocaleString(undefined, { month: 'short' })
-    return { x: label, y: Math.max(0, Math.round(60 + 20 * Math.sin(i / 2))) }
-  })
+    const d = new Date(now);
+    d.setMonth(now.getMonth() - (11 - i));
+    const label = d.toLocaleString(undefined, { month: 'short' });
+    return { x: label, y: Math.max(0, Math.round(60 + 20 * Math.sin(i / 2))) };
+  });
 }
 
 export const DataPage = () => {
-  const [timeframe, setTimeframe] = useState<Timeframe>('1D')
-  const lenses = useAppSelector(selectAllLenses)
-  const [selectedLensIds, setSelectedLensIds] = useState<string[]>([])
+  const [timeframe, setTimeframe] = useState<Timeframe>('1D');
+  const lenses = useAppSelector(selectAllLenses);
+  const [selectedLensIds, setSelectedLensIds] = useState<string[]>([]);
 
-  const data = useMemo(() => generateMockData(timeframe), [timeframe])
+  const data = useMemo(() => generateMockData(timeframe), [timeframe]);
 
-  const xAccessor = (d: BarDatum) => d.x
-  const yAccessor = (d: BarDatum) => d.y
+  const xAccessor = (d: BarDatum) => d.x;
+  const yAccessor = (d: BarDatum) => d.y;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -86,13 +86,13 @@ export const DataPage = () => {
               value={
                 selectedLensIds
                   .map((id) => {
-                    const l = lenses.find((x) => x.id === id)
+                    const l = lenses.find((x) => x.id === id);
                     return l
                       ? {
                           value: l.id,
                           label: `${l.brand} • ${l.manufacturer} • ${l.wearPeriodTitle}`
                         }
-                      : null
+                      : null;
                   })
                   .filter(Boolean) as { value: string; label: string }[]
               }
@@ -157,8 +157,8 @@ export const DataPage = () => {
               renderTooltip={({ tooltipData }) => {
                 const d = tooltipData?.nearestDatum?.datum as
                   | BarDatum
-                  | undefined
-                if (!d) return null
+                  | undefined;
+                if (!d) return null;
                 return (
                   <div className="rounded-lg border border-emerald-200 bg-white p-2 text-sm shadow-md dark:border-emerald-900/40 dark:bg-gray-900 dark:text-gray-100">
                     <div className="mb-0.5 text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
@@ -173,7 +173,7 @@ export const DataPage = () => {
                       <span className="font-semibold">{d.y}</span> uses
                     </div>
                   </div>
-                )
+                );
               }}
             />
           </XYChart>
@@ -185,5 +185,5 @@ export const DataPage = () => {
         analytics once available.
       </div>
     </div>
-  )
-}
+  );
+};

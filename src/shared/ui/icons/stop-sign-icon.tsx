@@ -1,10 +1,10 @@
-import React from 'react'
-import { SvgBase } from './svg-base'
+import React from 'react';
+import { SvgBase } from './svg-base';
 
 interface StopSignIconProps {
-  className?: string
-  width?: number | string
-  height?: number | string
+  className?: string;
+  width?: number | string;
+  height?: number | string;
 }
 
 export const StopSignIcon: React.FC<StopSignIconProps> = ({
@@ -36,5 +36,5 @@ export const StopSignIcon: React.FC<StopSignIconProps> = ({
         strokeWidth="2"
       />
     </SvgBase>
-  )
-}
+  );
+};

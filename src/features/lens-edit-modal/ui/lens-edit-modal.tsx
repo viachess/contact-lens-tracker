@@ -1,26 +1,26 @@
-import { MODAL_IDS } from '@/app/store'
-import { EditIcon, TrashIcon } from '@/shared/ui/icons'
-import { ModalContainer } from '@/shared/ui/portal-modal'
-import { useMemo, useState } from 'react'
-import CreatableSelect from 'react-select/creatable'
+import { MODAL_IDS } from '@/app/store';
+import { EditIcon, TrashIcon } from '@/shared/ui/icons';
+import { ModalContainer } from '@/shared/ui/portal-modal';
+import { useMemo, useState } from 'react';
+import CreatableSelect from 'react-select/creatable';
 import {
   getRemainingDays,
   isLensExpired,
   Lens
-} from '@/app/store/slices/lens-management-slice'
-import { lensTypeToWearPeriodMap } from '@/app/store/slices/lens-management-slice'
-import { useAppDispatch, useAppSelector } from '@/app/store/hooks'
+} from '@/app/store/slices/lens-management-slice';
+import { lensTypeToWearPeriodMap } from '@/app/store/slices/lens-management-slice';
+import { useAppDispatch, useAppSelector } from '@/app/store/hooks';
 import {
   swapCurrentLensForUser,
   takeOffCurrentLensForUser
-} from '@/app/store/slices/lens-management-slice'
+} from '@/app/store/slices/lens-management-slice';
 import {
   MANUFACTURER_BRANDS_MAP,
   inferWearPeriodTitleForBrand,
   BrandWithWearPeriod
-} from '@/shared/constants/lens-manufacturers'
-import { selectUser } from '@/app/store/slices/auth-slice'
-import { parseDate } from '@/shared/lib'
+} from '@/shared/constants/lens-manufacturers';
+import { selectUser } from '@/app/store/slices/auth-slice';
+import { parseDate } from '@/shared/lib';
 // import {
 //   isLensExpired,
 //   getRemainingDays,
@@ -28,53 +28,53 @@ import { parseDate } from '@/shared/lib'
 // } from '@/app/store/slices/lens-management-slice/selectors'
 
 interface LensEditModalProps {
-  lens: Lens | null
-  onClose: () => void
-  onEdit: (lens: Lens) => void
-  onDelete: (lens: Lens) => void
+  lens: Lens | null;
+  onClose: () => void;
+  onEdit: (lens: Lens) => void;
+  onDelete: (lens: Lens) => void;
 }
 
 const formatDate = (date: Date | null) => {
-  if (!date) return 'N/A'
+  if (!date) return 'N/A';
   return date.toLocaleDateString('ru-RU', {
     day: 'numeric',
     month: 'short'
-  })
-}
+  });
+};
 
 const getStatusColor = (status: string) => {
   switch (status) {
     case 'in-use':
-      return 'text-green-600 dark:text-green-400'
+      return 'text-green-600 dark:text-green-400';
     case 'opened':
-      return 'text-yellow-600 dark:text-yellow-400'
+      return 'text-yellow-600 dark:text-yellow-400';
     case 'taken-off':
-      return 'text-blue-600 dark:text-blue-400'
+      return 'text-blue-600 dark:text-blue-400';
     case 'unopened':
-      return 'text-gray-600 dark:text-gray-400'
+      return 'text-gray-600 dark:text-gray-400';
     case 'expired':
-      return 'text-red-600 dark:text-red-400'
+      return 'text-red-600 dark:text-red-400';
     default:
-      return 'text-gray-600 dark:text-gray-400'
+      return 'text-gray-600 dark:text-gray-400';
   }
-}
+};
 
 const getStatusText = (status: string) => {
   switch (status) {
     case 'in-use':
-      return 'В использовании'
+      return 'В использовании';
     case 'opened':
-      return 'Открыты'
+      return 'Открыты';
     case 'taken-off':
-      return 'Сняты'
+      return 'Сняты';
     case 'unopened':
-      return 'Не открыты'
+      return 'Не открыты';
     case 'expired':
-      return 'Истекли'
+      return 'Истекли';
     default:
-      return 'Неизвестно'
+      return 'Неизвестно';
   }
-}
+};
 
 export const LensEditModal = ({
   lens,
@@ -82,99 +82,99 @@ export const LensEditModal = ({
   onEdit,
   onDelete
 }: LensEditModalProps) => {
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
   const currentLens = useAppSelector(
     (state) => state.lensManagement.currentLens
-  )
-  const user = useAppSelector(selectUser)
+  );
+  const user = useAppSelector(selectUser);
   const manufacturerToBrands = useMemo(() => {
-    const map = new Map<string, Set<string>>()
+    const map = new Map<string, Set<string>>();
     Object.entries(MANUFACTURER_BRANDS_MAP).forEach(([m, brands]) => {
-      const names = (brands as BrandWithWearPeriod[]).map((b) => b.name)
-      map.set(m, new Set(names))
-    })
-    return map
-  }, [])
-  const [isEditing, setIsEditing] = useState(false)
-  const [editData, setEditData] = useState<Lens | null>(null)
-  const [usageError, setUsageError] = useState<string | null>(null)
+      const names = (brands as BrandWithWearPeriod[]).map((b) => b.name);
+      map.set(m, new Set(names));
+    });
+    return map;
+  }, []);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editData, setEditData] = useState<Lens | null>(null);
+  const [usageError, setUsageError] = useState<string | null>(null);
 
   const setWearPeriodByTitle = (title: string) => {
     const days =
-      lensTypeToWearPeriodMap[title as keyof typeof lensTypeToWearPeriodMap]
+      lensTypeToWearPeriodMap[title as keyof typeof lensTypeToWearPeriodMap];
     setEditData((prev) =>
       prev ? { ...prev, wearPeriodTitle: title, wearPeriodDays: days } : null
-    )
-  }
+    );
+  };
 
   const manufacturerOptions = useMemo(() => {
     return Array.from(manufacturerToBrands.keys())
       .sort()
-      .map((v) => ({ value: v, label: v }))
-  }, [manufacturerToBrands])
+      .map((v) => ({ value: v, label: v }));
+  }, [manufacturerToBrands]);
   const brandOptions = useMemo(() => {
-    const currentManufacturer = (editData?.manufacturer || '').trim()
+    const currentManufacturer = (editData?.manufacturer || '').trim();
     const brands = currentManufacturer
       ? manufacturerToBrands.get(currentManufacturer)
-      : undefined
+      : undefined;
     return brands
       ? Array.from(brands)
           .sort()
           .map((v) => ({ value: v, label: v }))
-      : []
-  }, [manufacturerToBrands, editData?.manufacturer])
+      : [];
+  }, [manufacturerToBrands, editData?.manufacturer]);
 
-  if (!lens) return null
+  if (!lens) return null;
 
   const handleEdit = () => {
-    setEditData({ ...lens })
-    setIsEditing(true)
-  }
+    setEditData({ ...lens });
+    setIsEditing(true);
+  };
 
   const handleSave = () => {
     if (editData) {
-      const up = editData.usagePeriodDays
-      const isUsageValid = Number.isFinite(up) && up >= 0 && up <= 365
+      const up = editData.usagePeriodDays;
+      const isUsageValid = Number.isFinite(up) && up >= 0 && up <= 365;
       if (!isUsageValid) {
-        setUsageError('Введите число от 0 до 365')
-        return
+        setUsageError('Введите число от 0 до 365');
+        return;
       }
-      onEdit(editData)
-      setIsEditing(false)
-      setEditData(null)
+      onEdit(editData);
+      setIsEditing(false);
+      setEditData(null);
     }
-  }
+  };
 
   const handleCancel = () => {
-    setIsEditing(false)
-    setEditData(null)
-  }
+    setIsEditing(false);
+    setEditData(null);
+  };
 
   const handleDelete = () => {
-    onDelete(lens)
-  }
+    onDelete(lens);
+  };
 
   const handleSwapLens = () => {
-    if (!user?.id) return
-    dispatch(swapCurrentLensForUser({ userId: user.id, lensId: lens.id }))
-    onClose()
-  }
+    if (!user?.id) return;
+    dispatch(swapCurrentLensForUser({ userId: user.id, lensId: lens.id }));
+    onClose();
+  };
 
   // No confirmation in edit modal: take off or put on directly
 
   const handleBackgroundClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
-      onClose()
+      onClose();
     }
-  }
+  };
 
-  const discardDate = lens.discardDate ? parseDate(lens.discardDate) : null
-  const remainingDays = getRemainingDays(lens)
-  const isExpired = isLensExpired(lens)
+  const discardDate = lens.discardDate ? parseDate(lens.discardDate) : null;
+  const remainingDays = getRemainingDays(lens);
+  const isExpired = isLensExpired(lens);
   const canSwap =
-    !isExpired && lens.status !== 'in-use' && currentLens?.id !== lens.id
+    !isExpired && lens.status !== 'in-use' && currentLens?.id !== lens.id;
   const canTakeOff =
-    !isExpired && lens.status === 'in-use' && currentLens?.id === lens.id
+    !isExpired && lens.status === 'in-use' && currentLens?.id === lens.id;
 
   return (
     <ModalContainer name={MODAL_IDS.LENS_EDIT}>
@@ -224,8 +224,8 @@ export const LensEditModal = ({
                   <button
                     type="button"
                     onClick={() => {
-                      setEditData({ ...lens })
-                      setUsageError(null)
+                      setEditData({ ...lens });
+                      setUsageError(null);
                     }}
                     className="flex flex-1 items-center justify-center gap-2 rounded-xl border-2 border-white/30 px-4 py-3 font-semibold text-white transition-all hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/50 sm:px-6"
                   >
@@ -251,14 +251,14 @@ export const LensEditModal = ({
                   {(canSwap || canTakeOff) && (
                     <button
                       onClick={() => {
-                        if (!user?.id) return
+                        if (!user?.id) return;
                         if (canTakeOff) {
                           dispatch(
                             takeOffCurrentLensForUser({ userId: user.id })
-                          )
-                          onClose()
+                          );
+                          onClose();
                         } else {
-                          handleSwapLens()
+                          handleSwapLens();
                         }
                       }}
                       className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-white/20 px-4 py-3 font-semibold text-white transition-all hover:bg-white/30 focus:outline-none focus:ring-2 focus:ring-white/50 sm:px-6"
@@ -362,23 +362,23 @@ export const LensEditModal = ({
                         }
                         onChange={(opt: any) =>
                           setEditData((prev) => {
-                            if (!prev) return null
-                            const nextBrand = opt?.value || ''
+                            if (!prev) return null;
+                            const nextBrand = opt?.value || '';
                             const inferred =
-                              inferWearPeriodTitleForBrand(nextBrand)
+                              inferWearPeriodTitleForBrand(nextBrand);
                             if (inferred) {
                               const days =
                                 lensTypeToWearPeriodMap[
                                   inferred as keyof typeof lensTypeToWearPeriodMap
-                                ]
+                                ];
                               return {
                                 ...prev,
                                 brand: nextBrand,
                                 wearPeriodTitle: inferred,
                                 wearPeriodDays: days
-                              }
+                              };
                             }
-                            return { ...prev, brand: nextBrand }
+                            return { ...prev, brand: nextBrand };
                           })
                         }
                         isClearable
@@ -470,8 +470,8 @@ export const LensEditModal = ({
                         type="number"
                         value={editData?.usagePeriodDays ?? 0}
                         onChange={(e) => {
-                          const v = e.target.value
-                          const parsed = v === '' ? 0 : Number(v)
+                          const v = e.target.value;
+                          const parsed = v === '' ? 0 : Number(v);
                           setEditData((prev) =>
                             prev
                               ? {
@@ -481,8 +481,8 @@ export const LensEditModal = ({
                                     : 0
                                 }
                               : null
-                          )
-                          if (usageError) setUsageError(null)
+                          );
+                          if (usageError) setUsageError(null);
                         }}
                         className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:px-4 sm:py-3 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                         min="0"
@@ -518,14 +518,14 @@ export const LensEditModal = ({
                       value={editData?.status || ''}
                       onChange={(e) =>
                         setEditData((prev) => {
-                          if (!prev) return null
-                          const next = e.target.value as Lens['status']
+                          if (!prev) return null;
+                          const next = e.target.value as Lens['status'];
                           return {
                             ...prev,
                             status: next,
                             openedDate:
                               next === 'unopened' ? null : prev.openedDate
-                          }
+                          };
                         })
                       }
                       className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:px-4 sm:py-3 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
@@ -578,21 +578,21 @@ export const LensEditModal = ({
                               : ''
                           }
                           onChange={(e) => {
-                            const date = e.target.value || ''
+                            const date = e.target.value || '';
                             setEditData((prev) => {
-                              if (!prev) return null
-                              const nextOpenedDate = date ? date : null
+                              if (!prev) return null;
+                              const nextOpenedDate = date ? date : null;
                               const nextStatus = date
                                 ? prev.status === 'unopened'
                                   ? 'opened'
                                   : prev.status
-                                : 'unopened'
+                                : 'unopened';
                               return {
                                 ...prev,
                                 openedDate: nextOpenedDate,
                                 status: nextStatus
-                              }
-                            })
+                              };
+                            });
                           }}
                           className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:px-4 sm:py-3 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                         />
@@ -666,5 +666,5 @@ export const LensEditModal = ({
         </div>
       </div>
     </ModalContainer>
-  )
-}
+  );
+};

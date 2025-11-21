@@ -1,5 +1,5 @@
-import { Navigation } from '@/features/navigation'
-import { Outlet } from 'react-router-dom'
+import { Navigation } from '@/features/navigation';
+import { Outlet } from 'react-router-dom';
 
 export const RootLayout = () => {
   return (
@@ -11,5 +11,5 @@ export const RootLayout = () => {
         <Outlet />
       </div>
     </div>
-  )
-}
+  );
+};

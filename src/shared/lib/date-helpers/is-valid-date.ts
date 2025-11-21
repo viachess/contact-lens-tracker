@@ -4,10 +4,10 @@ export const isValidDate = (date: any): date is Date => {
     if (isNaN(date)) {
       // d.getTime() or d.valueOf() will also work
       // date object is not valid
-      return false
+      return false;
     }
     // date object is valid
-    return true
+    return true;
   }
-  return false
-}
+  return false;
+};

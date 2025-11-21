@@ -1,8 +1,8 @@
 interface ProgressBarProps {
-  percentage: number
-  startLabel: string
-  endLabel: string
-  className?: string
+  percentage: number;
+  startLabel: string;
+  endLabel: string;
+  className?: string;
 }
 
 export const ProgressBar = ({
@@ -24,5 +24,5 @@ export const ProgressBar = ({
         />
       </div>
     </div>
-  )
-}
+  );
+};

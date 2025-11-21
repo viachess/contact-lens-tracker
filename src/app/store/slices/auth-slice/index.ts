@@ -1,10 +1,10 @@
-export { authSliceReducer } from './slice'
+export { authSliceReducer } from './slice';
 
-export { initSession, loginWithEmail, signupWithEmail, logout } from './thunks'
+export { initSession, loginWithEmail, signupWithEmail, logout } from './thunks';
 
 export {
   selectAuth,
   selectUser,
   selectAuthStatus,
   selectAuthError
-} from './selectors'
+} from './selectors';

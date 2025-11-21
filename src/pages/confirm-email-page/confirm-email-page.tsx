@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
 
 export const ConfirmEmailPage = () => {
   return (
@@ -15,5 +15,5 @@ export const ConfirmEmailPage = () => {
         Перейти ко входу
       </Link>
     </div>
-  )
-}
+  );
+};

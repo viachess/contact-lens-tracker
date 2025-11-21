@@ -1,11 +1,11 @@
-import { ThemeColors } from './theme-colors'
+import { ThemeColors } from './theme-colors';
 
 export interface AppState {
-  isLoading: boolean
+  isLoading: boolean;
   user: {
-    name: string
-    email: string
-  } | null
-  theme: 'light' | 'dark'
-  themeColors: ThemeColors
+    name: string;
+    email: string;
+  } | null;
+  theme: 'light' | 'dark';
+  themeColors: ThemeColors;
 }

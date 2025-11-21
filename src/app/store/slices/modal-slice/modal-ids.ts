@@ -6,6 +6,6 @@ export const MODAL_IDS = {
   LENS_TAKE_OFF_CONFIRM: 'LENS_TAKE_OFF_CONFIRM_MODAL',
   LENS_DISCARD_CONFIRM: 'LENS_DISCARD_CONFIRM_MODAL'
   // Add new IDs here
-} as const
+} as const;
 
-export type ModalId = (typeof MODAL_IDS)[keyof typeof MODAL_IDS]
+export type ModalId = (typeof MODAL_IDS)[keyof typeof MODAL_IDS];

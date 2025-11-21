@@ -1,10 +1,10 @@
-import React from 'react'
-import { SvgBase } from './svg-base'
+import React from 'react';
+import { SvgBase } from './svg-base';
 
 interface ContactLensIconProps {
-  className?: string
-  width?: number | string
-  height?: number | string
+  className?: string;
+  width?: number | string;
+  height?: number | string;
 }
 
 export const ContactLensIcon: React.FC<ContactLensIconProps> = ({
@@ -215,5 +215,5 @@ export const ContactLensIcon: React.FC<ContactLensIconProps> = ({
         />
       </g>
     </SvgBase>
-  )
-}
+  );
+};

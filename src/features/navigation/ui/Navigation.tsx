@@ -1,31 +1,31 @@
-import { useState } from 'react'
-import cn from 'classnames'
-import { Link } from 'react-router-dom'
-import { toggleTheme as toggleThemeAction } from '@/app/store/slices/app-slice/slice'
-import { selectTheme } from '@/app/store/slices/app-slice/selectors'
-import { routes } from '@/app/constants'
-import { useAppSelector, useAppDispatch } from '@/app/store/hooks'
-import { selectUser } from '@/app/store/slices/auth-slice/selectors'
-import { logout } from '@/app/store/slices/auth-slice'
-import { ProfileIcon } from '@/shared/ui/icons'
+import { useState } from 'react';
+import cn from 'classnames';
+import { Link } from 'react-router-dom';
+import { toggleTheme as toggleThemeAction } from '@/app/store/slices/app-slice/slice';
+import { selectTheme } from '@/app/store/slices/app-slice/selectors';
+import { routes } from '@/app/constants';
+import { useAppSelector, useAppDispatch } from '@/app/store/hooks';
+import { selectUser } from '@/app/store/slices/auth-slice/selectors';
+import { logout } from '@/app/store/slices/auth-slice';
+import { ProfileIcon } from '@/shared/ui/icons';
 
 export const Navigation = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const theme = useAppSelector(selectTheme)
-  const dispatch = useAppDispatch()
-  const user = useAppSelector(selectUser)
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const theme = useAppSelector(selectTheme);
+  const dispatch = useAppDispatch();
+  const user = useAppSelector(selectUser);
 
   const handleToggleTheme = () => {
-    dispatch(toggleThemeAction())
-  }
+    dispatch(toggleThemeAction());
+  };
 
   const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen)
-  }
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   const closeMenu = () => {
-    setIsMenuOpen(false)
-  }
+    setIsMenuOpen(false);
+  };
 
   return (
     <nav className="fixed inset-x-0 top-0 z-50 bg-[var(--color-navbar)] text-[var(--color-navbar-text)] shadow-md dark:bg-gray-900 dark:text-white">
@@ -176,8 +176,8 @@ export const Navigation = () => {
           {user && (
             <button
               onClick={() => {
-                dispatch(logout())
-                closeMenu()
+                dispatch(logout());
+                closeMenu();
               }}
               className="block w-full rounded-md px-3 py-2 text-left text-base font-medium transition-opacity hover:opacity-80"
             >
@@ -187,5 +187,5 @@ export const Navigation = () => {
         </div>
       </div>
     </nav>
-  )
-}
+  );
+};

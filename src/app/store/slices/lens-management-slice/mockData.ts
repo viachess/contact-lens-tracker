@@ -1,5 +1,5 @@
-import { Lens } from './types'
-import { nanoid } from 'nanoid'
+import { Lens } from './types';
+import { nanoid } from 'nanoid';
 
 export const mockLensesList: Lens[] = [
   {
@@ -62,4 +62,4 @@ export const mockLensesList: Lens[] = [
     accumulatedUsageMs: 0,
     lastResumedAt: null
   }
-]
+];

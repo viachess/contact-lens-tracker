@@ -1,10 +1,10 @@
-import React from 'react'
-import { SvgBase } from './svg-base'
+import React from 'react';
+import { SvgBase } from './svg-base';
 
 interface PauseIconProps {
-  className?: string
-  width?: number | string
-  height?: number | string
+  className?: string;
+  width?: number | string;
+  height?: number | string;
 }
 
 export const PauseIcon: React.FC<PauseIconProps> = ({
@@ -21,5 +21,5 @@ export const PauseIcon: React.FC<PauseIconProps> = ({
     >
       <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
     </SvgBase>
-  )
-}
+  );
+};

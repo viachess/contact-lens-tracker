@@ -1,24 +1,24 @@
-'use client'
+'use client';
 
-import { ModalContainer } from '@/shared/ui/portal-modal'
-import { MODAL_IDS } from '@/app/store'
-import { useAppDispatch, useAppSelector } from '@/app/store/hooks'
-import { closeModal } from '@/app/store/slices/modal-slice/slice'
-import { takeOffCurrentLensForUser } from '@/app/store/slices/lens-management-slice/slice'
-import { memo } from 'react'
-import { selectUser } from '@/app/store/slices/auth-slice/selectors'
+import { ModalContainer } from '@/shared/ui/portal-modal';
+import { MODAL_IDS } from '@/app/store';
+import { useAppDispatch, useAppSelector } from '@/app/store/hooks';
+import { closeModal } from '@/app/store/slices/modal-slice/slice';
+import { takeOffCurrentLensForUser } from '@/app/store/slices/lens-management-slice/slice';
+import { memo } from 'react';
+import { selectUser } from '@/app/store/slices/auth-slice/selectors';
 
 export const PauseConfirmModal = memo(() => {
-  const dispatch = useAppDispatch()
-  const user = useAppSelector(selectUser)
+  const dispatch = useAppDispatch();
+  const user = useAppSelector(selectUser);
 
-  const handleCancel = () => dispatch(closeModal())
+  const handleCancel = () => dispatch(closeModal());
   const handleConfirm = () => {
     if (user?.id) {
-      dispatch(takeOffCurrentLensForUser({ userId: user.id }))
+      dispatch(takeOffCurrentLensForUser({ userId: user.id }));
     }
-    dispatch(closeModal())
-  }
+    dispatch(closeModal());
+  };
 
   return (
     <ModalContainer name={MODAL_IDS.LENS_TAKE_OFF_CONFIRM}>
@@ -48,7 +48,7 @@ export const PauseConfirmModal = memo(() => {
         </div>
       </div>
     </ModalContainer>
-  )
-})
+  );
+});
 
-PauseConfirmModal.displayName = 'PauseConfirmModal'
+PauseConfirmModal.displayName = 'PauseConfirmModal';

@@ -1,21 +1,21 @@
-import { MODAL_IDS } from '@/app/store'
-import { ModalContainer } from '@/shared/ui/portal-modal'
-import { useMemo, useState } from 'react'
-import CreatableSelect from 'react-select/creatable'
+import { MODAL_IDS } from '@/app/store';
+import { ModalContainer } from '@/shared/ui/portal-modal';
+import { useMemo, useState } from 'react';
+import CreatableSelect from 'react-select/creatable';
 import {
   MANUFACTURER_BRANDS_MAP,
   inferWearPeriodTitleForBrand,
   BrandWithWearPeriod
-} from '@/shared/constants/lens-manufacturers'
+} from '@/shared/constants/lens-manufacturers';
 import {
   Lens,
   lensTypeToWearPeriodMap
-} from '@/app/store/slices/lens-management-slice'
+} from '@/app/store/slices/lens-management-slice';
 
 interface AddLensModalProps {
-  onClose: () => void
-  onAdd: (lens: Omit<Lens, 'id'>) => void
-  mode?: 'single' | 'pack'
+  onClose: () => void;
+  onAdd: (lens: Omit<Lens, 'id'>) => void;
+  mode?: 'single' | 'pack';
 }
 
 export const AddLensModal = ({
@@ -23,7 +23,7 @@ export const AddLensModal = ({
   onAdd,
   mode = 'single'
 }: AddLensModalProps) => {
-  const DEFAULT_PACK_PAIR_COUNT = 3
+  const DEFAULT_PACK_PAIR_COUNT = 3;
 
   const [formData, setFormData] = useState<Omit<Lens, 'id'>>({
     manufacturer: '',
@@ -36,52 +36,52 @@ export const AddLensModal = ({
     sphere: '',
     baseCurveRadius: '8.6',
     openedDate: null
-  })
+  });
 
   const [pairCountInput, setPairCountInput] = useState<string>(
     String(DEFAULT_PACK_PAIR_COUNT)
-  )
-  const [pairCountError, setPairCountError] = useState<string | null>(null)
-  const [usageError, setUsageError] = useState<string | null>(null)
+  );
+  const [pairCountError, setPairCountError] = useState<string | null>(null);
+  const [usageError, setUsageError] = useState<string | null>(null);
 
   const manufacturerToBrands = useMemo(() => {
-    const map = new Map<string, Set<string>>()
+    const map = new Map<string, Set<string>>();
     Object.entries(MANUFACTURER_BRANDS_MAP).forEach(([m, brands]) => {
-      const names = (brands as BrandWithWearPeriod[]).map((b) => b.name)
-      map.set(m, new Set(names))
-    })
-    return map
-  }, [])
+      const names = (brands as BrandWithWearPeriod[]).map((b) => b.name);
+      map.set(m, new Set(names));
+    });
+    return map;
+  }, []);
   const manufacturerOptions = useMemo(() => {
     return Array.from(manufacturerToBrands.keys())
       .sort()
-      .map((v) => ({ value: v, label: v }))
-  }, [manufacturerToBrands])
+      .map((v) => ({ value: v, label: v }));
+  }, [manufacturerToBrands]);
   const brandOptions = useMemo(() => {
-    const currentManufacturer = (formData.manufacturer || '').trim()
+    const currentManufacturer = (formData.manufacturer || '').trim();
     const brands = currentManufacturer
       ? manufacturerToBrands.get(currentManufacturer)
-      : undefined
+      : undefined;
     return brands
       ? Array.from(brands)
           .sort()
           .map((v) => ({ value: v, label: v }))
-      : []
-  }, [manufacturerToBrands, formData.manufacturer])
+      : [];
+  }, [manufacturerToBrands, formData.manufacturer]);
 
   const closeAndReset = () => {
     if (mode === 'pack') {
-      setPairCountInput(String(DEFAULT_PACK_PAIR_COUNT))
-      setPairCountError(null)
+      setPairCountInput(String(DEFAULT_PACK_PAIR_COUNT));
+      setPairCountError(null);
     }
-    onClose()
-  }
+    onClose();
+  };
 
   const handleBackgroundClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
-      closeAndReset()
+      closeAndReset();
     }
-  }
+  };
 
   const resetForm = () => {
     setFormData({
@@ -95,61 +95,61 @@ export const AddLensModal = ({
       sphere: '',
       baseCurveRadius: '8.6',
       openedDate: null
-    })
-    setUsageError(null)
+    });
+    setUsageError(null);
     if (mode === 'pack') {
-      setPairCountInput(String(DEFAULT_PACK_PAIR_COUNT))
-      setPairCountError(null)
+      setPairCountInput(String(DEFAULT_PACK_PAIR_COUNT));
+      setPairCountError(null);
     }
-  }
+  };
 
   const handleSave = () => {
     if (formData.manufacturer && formData.sphere) {
       // validate usage period
-      const up = formData.usagePeriodDays
-      const isUsageValid = Number.isFinite(up) && up >= 0 && up <= 365
+      const up = formData.usagePeriodDays;
+      const isUsageValid = Number.isFinite(up) && up >= 0 && up <= 365;
       if (!isUsageValid) {
-        setUsageError('Введите число от 0 до 365')
-        return
+        setUsageError('Введите число от 0 до 365');
+        return;
       }
-      let count = 1
+      let count = 1;
       if (mode === 'pack') {
         const parsed =
-          pairCountInput.trim() === '' ? NaN : Number(pairCountInput)
-        const intVal = Number.isFinite(parsed) ? Math.floor(parsed) : NaN
-        const isValid = Number.isFinite(intVal) && intVal >= 1 && intVal <= 50
+          pairCountInput.trim() === '' ? NaN : Number(pairCountInput);
+        const intVal = Number.isFinite(parsed) ? Math.floor(parsed) : NaN;
+        const isValid = Number.isFinite(intVal) && intVal >= 1 && intVal <= 50;
         if (!isValid) {
-          setPairCountError('Введите целое число от 1 до 50')
-          return
+          setPairCountError('Введите целое число от 1 до 50');
+          return;
         }
-        count = intVal
+        count = intVal;
       }
       for (let i = 0; i < count; i += 1) {
-        onAdd(formData)
+        onAdd(formData);
       }
-      closeAndReset()
+      closeAndReset();
     }
-  }
+  };
 
   const handleCancel = () => {
-    closeAndReset()
-  }
+    closeAndReset();
+  };
 
   const updateFormData = (field: string, value: string | null | number) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
-  }
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const setWearPeriodByTitle = (wearPeriodTitle: string) => {
     const wearPeriodDays =
       lensTypeToWearPeriodMap[
         wearPeriodTitle as keyof typeof lensTypeToWearPeriodMap
-      ]
-    updateFormData('wearPeriodTitle', wearPeriodTitle)
-    updateFormData('wearPeriodDays', wearPeriodDays)
-  }
+      ];
+    updateFormData('wearPeriodTitle', wearPeriodTitle);
+    updateFormData('wearPeriodDays', wearPeriodDays);
+  };
   const handleWearPeriodChange = (wearPeriodTitle: string) => {
-    setWearPeriodByTitle(wearPeriodTitle)
-  }
+    setWearPeriodByTitle(wearPeriodTitle);
+  };
 
   return (
     <ModalContainer name={MODAL_IDS.ADD_LENS}>
@@ -216,9 +216,9 @@ export const AddLensModal = ({
                           : null
                       }
                       onChange={(opt: any) => {
-                        updateFormData('manufacturer', opt ? opt.value : '')
+                        updateFormData('manufacturer', opt ? opt.value : '');
                         // reset brand on manufacturer change
-                        updateFormData('brand', '')
+                        updateFormData('brand', '');
                       }}
                       isClearable
                     />
@@ -241,11 +241,12 @@ export const AddLensModal = ({
                           : null
                       }
                       onChange={(opt: any) => {
-                        const nextBrand = opt ? opt.value : ''
-                        updateFormData('brand', nextBrand)
+                        const nextBrand = opt ? opt.value : '';
+                        updateFormData('brand', nextBrand);
                         // infer wear period from known brand name
-                        const inferred = inferWearPeriodTitleForBrand(nextBrand)
-                        if (inferred) setWearPeriodByTitle(inferred)
+                        const inferred =
+                          inferWearPeriodTitleForBrand(nextBrand);
+                        if (inferred) setWearPeriodByTitle(inferred);
                       }}
                       isClearable
                     />
@@ -294,7 +295,7 @@ export const AddLensModal = ({
                         <option key={v} value={v}>
                           {v}
                         </option>
-                      )
+                      );
                     })}
                   </select>
                 </div>
@@ -307,17 +308,17 @@ export const AddLensModal = ({
                     type="number"
                     value={formData.usagePeriodDays ?? 0}
                     onChange={(e) => {
-                      const v = e.target.value
+                      const v = e.target.value;
                       if (v === '') {
-                        updateFormData('usagePeriodDays', 0)
-                        return
+                        updateFormData('usagePeriodDays', 0);
+                        return;
                       }
-                      const parsed = Number(v)
+                      const parsed = Number(v);
                       updateFormData(
                         'usagePeriodDays',
                         Number.isFinite(parsed) ? Math.max(0, parsed) : 0
-                      )
-                      if (usageError) setUsageError(null)
+                      );
+                      if (usageError) setUsageError(null);
                     }}
                     className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:px-4 sm:py-3 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                     min="0"
@@ -337,11 +338,11 @@ export const AddLensModal = ({
                   <select
                     value={formData.status}
                     onChange={(e) => {
-                      const next = e.target.value
-                      updateFormData('status', next)
+                      const next = e.target.value;
+                      updateFormData('status', next);
                       // if status is set to unopened, reset opened date
                       if (next === 'unopened')
-                        updateFormData('openedDate', null)
+                        updateFormData('openedDate', null);
                     }}
                     className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:px-4 sm:py-3 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                   >
@@ -360,8 +361,8 @@ export const AddLensModal = ({
                       type="number"
                       value={pairCountInput}
                       onChange={(e) => {
-                        setPairCountInput(e.target.value)
-                        if (pairCountError) setPairCountError(null)
+                        setPairCountInput(e.target.value);
+                        if (pairCountError) setPairCountError(null);
                       }}
                       className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:px-4 sm:py-3 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                       min={1}
@@ -392,14 +393,14 @@ export const AddLensModal = ({
                       type="date"
                       value={formData.openedDate || ''}
                       onChange={(e) => {
-                        const date = e.target.value || null
-                        updateFormData('openedDate', date)
+                        const date = e.target.value || null;
+                        updateFormData('openedDate', date);
                         if (date) {
                           if (formData.status === 'unopened') {
-                            updateFormData('status', 'opened')
+                            updateFormData('status', 'opened');
                           }
                         } else {
-                          updateFormData('status', 'unopened')
+                          updateFormData('status', 'unopened');
                         }
                       }}
                       className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:px-4 sm:py-3 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
@@ -408,8 +409,8 @@ export const AddLensModal = ({
                       <button
                         type="button"
                         onClick={() => {
-                          updateFormData('openedDate', null)
-                          updateFormData('status', 'unopened')
+                          updateFormData('openedDate', null);
+                          updateFormData('status', 'unopened');
                         }}
                         className="shrink-0 rounded-xl border-2 border-gray-300 px-3 py-2.5 text-sm font-semibold text-gray-700 transition-all hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
                       >
@@ -451,5 +452,5 @@ export const AddLensModal = ({
         </div>
       </div>
     </ModalContainer>
-  )
-}
+  );
+};

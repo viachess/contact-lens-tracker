@@ -8,5 +8,5 @@ export const getStartOfLocalDay = (date: Date) => {
     0,
     0,
     0
-  )
-}
+  );
+};

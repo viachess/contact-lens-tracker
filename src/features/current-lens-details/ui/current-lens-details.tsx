@@ -1,27 +1,27 @@
-import { MODAL_IDS } from '@/app/store'
-import { useAppDispatch, useAppSelector } from '@/app/store/hooks'
-import { selectUser } from '@/app/store/slices/auth-slice'
+import { MODAL_IDS } from '@/app/store';
+import { useAppDispatch, useAppSelector } from '@/app/store/hooks';
+import { selectUser } from '@/app/store/slices/auth-slice';
 import {
   calculateTotalUsageMs,
   getRemainingDays,
   getRemainingHours,
   isLensExpired,
   selectCurrentLens
-} from '@/app/store/slices/lens-management-slice'
-import { openModal } from '@/app/store/slices/modal-slice/slice'
+} from '@/app/store/slices/lens-management-slice';
+import { openModal } from '@/app/store/slices/modal-slice/slice';
 import {
   DiscardConfirmModal,
   PauseConfirmModal
-} from '@/features/lens-action-modals'
-import { getEndOfLocalDay } from '@/shared/lib'
-import { ContactLensIcon, StopSignIcon } from '@/shared/ui/icons'
-import { ProgressBar } from '@/shared/ui/progress-bar'
-import { Link } from 'react-router-dom'
+} from '@/features/lens-action-modals';
+import { getEndOfLocalDay } from '@/shared/lib';
+import { ContactLensIcon, StopSignIcon } from '@/shared/ui/icons';
+import { ProgressBar } from '@/shared/ui/progress-bar';
+import { Link } from 'react-router-dom';
 
 export const CurrentLensDetails = () => {
-  const dispatch = useAppDispatch()
-  const currentLens = useAppSelector(selectCurrentLens)
-  const user = useAppSelector(selectUser)
+  const dispatch = useAppDispatch();
+  const currentLens = useAppSelector(selectCurrentLens);
+  const user = useAppSelector(selectUser);
 
   if (!currentLens) {
     return (
@@ -34,7 +34,7 @@ export const CurrentLensDetails = () => {
           К списку линз
         </Link>
       </div>
-    )
+    );
   }
 
   const {
@@ -45,78 +45,78 @@ export const CurrentLensDetails = () => {
     wearPeriodDays,
     openedDate,
     status
-  } = currentLens
+  } = currentLens;
 
-  const totalUsageMs = calculateTotalUsageMs(currentLens)
-  const msPerDay = 24 * 60 * 60 * 1000
-  let progressPercentage: number
+  const totalUsageMs = calculateTotalUsageMs(currentLens);
+  const msPerDay = 24 * 60 * 60 * 1000;
+  let progressPercentage: number;
   if (wearPeriodDays === 1) {
     // For daily lenses, reflect hours left until end of local day
     if (isLensExpired(currentLens)) {
-      progressPercentage = 100
+      progressPercentage = 100;
     } else if (openedDate) {
-      const endOfDay = getEndOfLocalDay(new Date(openedDate))
-      const remainingMs = Math.max(0, endOfDay.getTime() - Date.now())
+      const endOfDay = getEndOfLocalDay(new Date(openedDate));
+      const remainingMs = Math.max(0, endOfDay.getTime() - Date.now());
       progressPercentage = Math.min(
         Math.max(((msPerDay - remainingMs) / msPerDay) * 100, 0),
         100
-      )
+      );
     } else {
-      progressPercentage = 0
+      progressPercentage = 0;
     }
   } else {
     // For multi-day lenses, use total usage time across the entire period
     progressPercentage = Math.min(
       Math.max((totalUsageMs / (wearPeriodDays * msPerDay)) * 100, 0),
       100
-    )
+    );
   }
 
-  const remainingDays = getRemainingDays(currentLens)
+  const remainingDays = getRemainingDays(currentLens);
 
   const formatDate = (date: Date | null) => {
-    if (!date) return 'N/A'
+    if (!date) return 'N/A';
     return new Date(date).toLocaleDateString('ru-RU', {
       month: 'short',
       day: 'numeric'
-    })
-  }
+    });
+  };
 
-  const isExpired = isLensExpired(currentLens)
+  const isExpired = isLensExpired(currentLens);
 
-  const startLabelDate = openedDate ? formatDate(new Date(openedDate)) : 'N/A'
+  const startLabelDate = openedDate ? formatDate(new Date(openedDate)) : 'N/A';
   const endLabelDate = openedDate
     ? formatDate(
         new Date(
           new Date(openedDate).getTime() + wearPeriodDays * 24 * 60 * 60 * 1000
         )
       )
-    : 'N/A'
+    : 'N/A';
 
   // When remaining time goes under 24 hours, append hours left to the progress bar end label
-  const msPerHour = 60 * 60 * 1000
+  const msPerHour = 60 * 60 * 1000;
   const remainingHoursForLabel = (() => {
-    if (isExpired) return null
+    if (isExpired) return null;
     if (wearPeriodDays === 1) {
-      return getRemainingHours(currentLens)
+      return getRemainingHours(currentLens);
     }
-    const totalPeriodMs = wearPeriodDays * msPerDay
-    const remainingTotalMs = Math.max(0, totalPeriodMs - totalUsageMs)
+    const totalPeriodMs = wearPeriodDays * msPerDay;
+    const remainingTotalMs = Math.max(0, totalPeriodMs - totalUsageMs);
     if (remainingTotalMs <= msPerDay) {
-      return Math.ceil(remainingTotalMs / msPerHour)
+      return Math.ceil(remainingTotalMs / msPerHour);
     }
-    return null
-  })()
+    return null;
+  })();
 
   const endProgressLabel =
     remainingHoursForLabel != null
       ? `${endLabelDate} (${remainingHoursForLabel}ч.)`
-      : endLabelDate
+      : endLabelDate;
 
   const openTakeOffModal = () =>
-    dispatch(openModal(MODAL_IDS.LENS_TAKE_OFF_CONFIRM))
+    dispatch(openModal(MODAL_IDS.LENS_TAKE_OFF_CONFIRM));
   const openDiscardModal = () =>
-    dispatch(openModal(MODAL_IDS.LENS_DISCARD_CONFIRM))
+    dispatch(openModal(MODAL_IDS.LENS_DISCARD_CONFIRM));
 
   return (
     <div className="max-w-md">
@@ -176,5 +176,5 @@ export const CurrentLensDetails = () => {
       <PauseConfirmModal />
       <DiscardConfirmModal />
     </div>
-  )
-}
+  );
+};

@@ -6,24 +6,24 @@ import {
   ProfilePage,
   SettingsPage,
   SignUpPage
-} from '@/pages'
-import { FC } from 'react'
+} from '@/pages';
+import { FC } from 'react';
 import {
   createBrowserRouter,
   createRoutesFromElements,
   Route
-} from 'react-router-dom'
-import { RootLayout } from './layout/root-layout'
-import { ProtectedRoute } from './providers/ProtectedRoute'
+} from 'react-router-dom';
+import { RootLayout } from './layout/root-layout';
+import { ProtectedRoute } from './providers/ProtectedRoute';
 
 export const routes: {
-  title: string
-  path: string
-  element: FC
+  title: string;
+  path: string;
+  element: FC;
 }[] = [
   { title: 'Линзы', path: '/lenses', element: SettingsPage },
   { title: 'Данные', path: '/data', element: DataPage }
-]
+];
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -58,8 +58,8 @@ export const router = createBrowserRouter(
               </ProtectedRoute>
             }
           />
-        )
+        );
       })}
     </Route>
   )
-)
+);

@@ -1,1 +1,1 @@
-export { CurrentLensDetails } from './ui/current-lens-details'
+export { CurrentLensDetails } from './ui/current-lens-details';

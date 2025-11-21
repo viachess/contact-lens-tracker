@@ -1,7 +1,7 @@
-export { SvgBase } from './svg-base'
-export { ContactLensIcon } from './contact-lens-icon'
-export { StopSignIcon } from './stop-sign-icon'
-export { PauseIcon } from './pause-icon'
-export { EditIcon } from './edit-icon'
-export { TrashIcon } from './trash-icon'
-export { ProfileIcon } from './profile-icon'
+export { SvgBase } from './svg-base';
+export { ContactLensIcon } from './contact-lens-icon';
+export { StopSignIcon } from './stop-sign-icon';
+export { PauseIcon } from './pause-icon';
+export { EditIcon } from './edit-icon';
+export { TrashIcon } from './trash-icon';
+export { ProfileIcon } from './profile-icon';

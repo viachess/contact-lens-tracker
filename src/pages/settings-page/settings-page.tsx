@@ -1,8 +1,8 @@
-import { LensEditModal } from '@/features/lens-edit-modal'
-import { AddLensModal } from '@/features/add-lens-modal'
-import { openModal, closeModal } from '@/app/store/slices/modal-slice/slice'
-import { useAppDispatch, useAppSelector } from '@/app/store/hooks'
-import { MODAL_IDS } from '@/app/store'
+import { LensEditModal } from '@/features/lens-edit-modal';
+import { AddLensModal } from '@/features/add-lens-modal';
+import { openModal, closeModal } from '@/app/store/slices/modal-slice/slice';
+import { useAppDispatch, useAppSelector } from '@/app/store/hooks';
+import { MODAL_IDS } from '@/app/store';
 import {
   selectAllLenses,
   addLensForUser,
@@ -10,103 +10,103 @@ import {
   deleteLensForUser,
   Lens,
   getRemainingDays
-} from '@/app/store/slices/lens-management-slice'
-import { selectUser } from '@/app/store/slices/auth-slice/selectors'
+} from '@/app/store/slices/lens-management-slice';
+import { selectUser } from '@/app/store/slices/auth-slice/selectors';
 
-import { useState } from 'react'
-import { parseDate } from '@/shared/lib'
+import { useState } from 'react';
+import { parseDate } from '@/shared/lib';
 
 export const SettingsPage = () => {
-  const dispatch = useAppDispatch()
-  const lenses = useAppSelector(selectAllLenses)
-  const user = useAppSelector(selectUser)
-  const [selectedLens, setSelectedLens] = useState<Lens | null>(null)
-  const [addMode, setAddMode] = useState<'single' | 'pack'>('single')
+  const dispatch = useAppDispatch();
+  const lenses = useAppSelector(selectAllLenses);
+  const user = useAppSelector(selectUser);
+  const [selectedLens, setSelectedLens] = useState<Lens | null>(null);
+  const [addMode, setAddMode] = useState<'single' | 'pack'>('single');
 
   const handleLensClick = (lens: Lens) => {
-    setSelectedLens(lens)
-    dispatch(openModal(MODAL_IDS.LENS_EDIT))
-  }
+    setSelectedLens(lens);
+    dispatch(openModal(MODAL_IDS.LENS_EDIT));
+  };
 
   const handleCloseModal = () => {
-    dispatch(closeModal())
-    setSelectedLens(null)
-  }
+    dispatch(closeModal());
+    setSelectedLens(null);
+  };
 
   const handleEdit = (lens: Lens) => {
-    if (!user?.id) return
-    dispatch(updateLensForUser({ lens }))
-    handleCloseModal()
-  }
+    if (!user?.id) return;
+    dispatch(updateLensForUser({ lens }));
+    handleCloseModal();
+  };
 
   const handleDelete = (lens: Lens) => {
-    if (!user?.id) return
-    dispatch(deleteLensForUser({ userId: user.id, id: lens.id }))
-    handleCloseModal()
-  }
+    if (!user?.id) return;
+    dispatch(deleteLensForUser({ userId: user.id, id: lens.id }));
+    handleCloseModal();
+  };
 
   const handleAddLens = () => {
-    setAddMode('single')
-    dispatch(openModal(MODAL_IDS.ADD_LENS))
-  }
+    setAddMode('single');
+    dispatch(openModal(MODAL_IDS.ADD_LENS));
+  };
 
   const handleAddPack = () => {
-    setAddMode('pack')
-    dispatch(openModal(MODAL_IDS.ADD_LENS))
-  }
+    setAddMode('pack');
+    dispatch(openModal(MODAL_IDS.ADD_LENS));
+  };
 
   const handleCloseAddModal = () => {
-    dispatch(closeModal())
-    setAddMode('single')
-  }
+    dispatch(closeModal());
+    setAddMode('single');
+  };
 
   const handleAdd = (lensData: Omit<Lens, 'id'>) => {
-    if (!user?.id) return
-    dispatch(addLensForUser({ userId: user.id, lens: lensData }))
-    console.log('Add lens:', lensData)
-  }
+    if (!user?.id) return;
+    dispatch(addLensForUser({ userId: user.id, lens: lensData }));
+    console.log('Add lens:', lensData);
+  };
 
   const formatDate = (date: Date | null) => {
-    if (!date) return 'N/A'
+    if (!date) return 'N/A';
     return date.toLocaleDateString('ru-RU', {
       day: 'numeric',
       month: 'short'
-    })
-  }
+    });
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'in-use':
-        return 'text-green-600 dark:text-green-400'
+        return 'text-green-600 dark:text-green-400';
       case 'opened':
-        return 'text-yellow-600 dark:text-yellow-400'
+        return 'text-yellow-600 dark:text-yellow-400';
       case 'taken-off':
-        return 'text-blue-600 dark:text-blue-400'
+        return 'text-blue-600 dark:text-blue-400';
       case 'unopened':
-        return 'text-gray-600 dark:text-gray-400'
+        return 'text-gray-600 dark:text-gray-400';
       case 'expired':
-        return 'text-red-600 dark:text-red-400'
+        return 'text-red-600 dark:text-red-400';
       default:
-        return 'text-gray-600 dark:text-gray-400'
+        return 'text-gray-600 dark:text-gray-400';
     }
-  }
+  };
 
   const getStatusText = (status: string) => {
     switch (status) {
       case 'in-use':
-        return 'В использовании'
+        return 'В использовании';
       case 'opened':
-        return 'Открыты'
+        return 'Открыты';
       case 'taken-off':
-        return 'Сняты'
+        return 'Сняты';
       case 'unopened':
-        return 'Не открыты'
+        return 'Не открыты';
       case 'expired':
-        return 'Истекли'
+        return 'Истекли';
       default:
-        return 'Неизвестно'
+        return 'Неизвестно';
     }
-  }
+  };
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
@@ -137,7 +137,7 @@ export const SettingsPage = () => {
 
         <div className="space-y-3">
           {lenses.map((lens) => {
-            const remainingDays = getRemainingDays(lens)
+            const remainingDays = getRemainingDays(lens);
             return (
               <div
                 key={lens.id}
@@ -176,7 +176,7 @@ export const SettingsPage = () => {
                   </div>
                 </div>
               </div>
-            )
+            );
           })}
         </div>
       </div>
@@ -194,5 +194,5 @@ export const SettingsPage = () => {
         onAdd={handleAdd}
       />
     </div>
-  )
-}
+  );
+};

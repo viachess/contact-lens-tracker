@@ -1,4 +1,4 @@
-import { ThemeColors } from '../model/theme-colors'
+import { ThemeColors } from '../model/theme-colors';
 
 export const DEFAULT_THEME_COLORS: ThemeColors = {
   navbar: '#ffffff',
@@ -12,4 +12,4 @@ export const DEFAULT_THEME_COLORS: ThemeColors = {
   buttonPrimaryText: '#ffffff',
   buttonSecondaryText: '#ffffff',
   buttonDangerText: '#ffffff'
-}
+};

@@ -1,8 +1,8 @@
-import { LensTypeByWearPeriodEnum } from '@/app/store/slices/lens-management-slice'
+import { LensTypeByWearPeriodEnum } from '@/app/store/slices/lens-management-slice';
 
 export interface BrandWithWearPeriod {
-  name: string
-  wearPeriod: LensTypeByWearPeriodEnum
+  name: string;
+  wearPeriod: LensTypeByWearPeriodEnum;
 }
 
 // Manufacturer -> list of brands with explicit wear period
@@ -61,7 +61,7 @@ export const MANUFACTURER_BRANDS_MAP: Record<string, BrandWithWearPeriod[]> = {
     { name: 'Miru 1month', wearPeriod: LensTypeByWearPeriodEnum.Monthly },
     { name: 'PremiO', wearPeriod: LensTypeByWearPeriodEnum.Monthly }
   ]
-}
+};
 
 // Flattened brand -> wear period map (case-insensitive by using lowercase keys)
 export const BRAND_TO_WEAR_PERIOD_MAP: Record<
@@ -71,18 +71,18 @@ export const BRAND_TO_WEAR_PERIOD_MAP: Record<
   .flat()
   .reduce(
     (acc, { name, wearPeriod }) => {
-      acc[name.trim().toLowerCase()] = wearPeriod
-      return acc
+      acc[name.trim().toLowerCase()] = wearPeriod;
+      return acc;
     },
     {} as Record<string, LensTypeByWearPeriodEnum>
-  )
+  );
 
 // Direct lookup by brand name; returns one of:
 // 'Ежедневные' | 'Двухнедельные' | 'Ежемесячные' | null
 export const inferWearPeriodTitleForBrand = (
   brandRaw: string
 ): string | null => {
-  const key = (brandRaw || '').trim().toLowerCase()
-  if (!key) return null
-  return BRAND_TO_WEAR_PERIOD_MAP[key] ?? null
-}
+  const key = (brandRaw || '').trim().toLowerCase();
+  if (!key) return null;
+  return BRAND_TO_WEAR_PERIOD_MAP[key] ?? null;
+};

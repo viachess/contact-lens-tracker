@@ -1,8 +1,8 @@
-import { Provider } from 'react-redux'
-import { store } from '@/app/store/store'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { SettingsPage } from '@/pages/settings-page/settings-page'
-import { vi } from 'vitest'
+import { Provider } from 'react-redux';
+import { store } from '@/app/store/store';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { SettingsPage } from '@/pages/settings-page/settings-page';
+import { vi } from 'vitest';
 
 vi.mock('@/shared/lib/supabaseClient', () => {
   return {
@@ -29,21 +29,21 @@ vi.mock('@/shared/lib/supabaseClient', () => {
       })
     }),
     isSupabaseConfigured: true
-  }
-})
+  };
+});
 
 describe('SettingsPage', () => {
   const renderWithProvider = (ui: React.ReactElement) =>
-    render(<Provider store={store}>{ui}</Provider>)
+    render(<Provider store={store}>{ui}</Provider>);
 
   test('renders', () => {
-    renderWithProvider(<SettingsPage />)
-    expect(screen.getByText(/Настройки/)).toBeInTheDocument()
-  })
+    renderWithProvider(<SettingsPage />);
+    expect(screen.getByText(/Настройки/)).toBeInTheDocument();
+  });
 
   test('add lens btn works (smoke)', async () => {
-    renderWithProvider(<SettingsPage />)
-    fireEvent.click(screen.getByText('Добавить линзу'))
-    await waitFor(() => {})
-  })
-})
+    renderWithProvider(<SettingsPage />);
+    fireEvent.click(screen.getByText('Добавить линзу'));
+    await waitFor(() => {});
+  });
+});

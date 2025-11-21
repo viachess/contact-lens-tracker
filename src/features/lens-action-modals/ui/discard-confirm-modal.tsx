@@ -1,23 +1,23 @@
-'use client'
+'use client';
 
-import { ModalContainer } from '@/shared/ui/portal-modal'
-import { MODAL_IDS } from '@/app/store'
-import { useAppDispatch, useAppSelector } from '@/app/store/hooks'
-import { closeModal } from '@/app/store/slices/modal-slice/slice'
-import { discardCurrentLensForUser } from '@/app/store/slices/lens-management-slice/slice'
-import { selectUser } from '@/app/store/slices/auth-slice/selectors'
+import { ModalContainer } from '@/shared/ui/portal-modal';
+import { MODAL_IDS } from '@/app/store';
+import { useAppDispatch, useAppSelector } from '@/app/store/hooks';
+import { closeModal } from '@/app/store/slices/modal-slice/slice';
+import { discardCurrentLensForUser } from '@/app/store/slices/lens-management-slice/slice';
+import { selectUser } from '@/app/store/slices/auth-slice/selectors';
 
 export const DiscardConfirmModal = () => {
-  const dispatch = useAppDispatch()
-  const user = useAppSelector(selectUser)
+  const dispatch = useAppDispatch();
+  const user = useAppSelector(selectUser);
 
-  const handleCancel = () => dispatch(closeModal())
+  const handleCancel = () => dispatch(closeModal());
   const handleConfirm = () => {
     if (user?.id) {
-      dispatch(discardCurrentLensForUser({ userId: user.id }))
+      dispatch(discardCurrentLensForUser({ userId: user.id }));
     }
-    dispatch(closeModal())
-  }
+    dispatch(closeModal());
+  };
 
   return (
     <ModalContainer name={MODAL_IDS.LENS_DISCARD_CONFIRM}>
@@ -47,5 +47,5 @@ export const DiscardConfirmModal = () => {
         </div>
       </div>
     </ModalContainer>
-  )
-}
+  );
+};

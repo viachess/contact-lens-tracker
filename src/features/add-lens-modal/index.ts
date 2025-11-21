@@ -1,1 +1,1 @@
-export { AddLensModal } from './ui/add-lens-modal'
+export { AddLensModal } from './ui/add-lens-modal';

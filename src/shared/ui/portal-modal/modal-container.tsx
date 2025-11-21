@@ -1,21 +1,21 @@
-'use client'
+'use client';
 
-import React, { FC, ReactNode, useEffect } from 'react'
-import { Portal } from './portal-modal'
-import { PortalTypeEnum } from './types'
-import { closeModal } from '@/app/store/slices/modal-slice/slice'
-import { selectOpenedModal } from '@/app/store/slices/modal-slice/selectors'
-import { useAppDispatch, useAppSelector } from '@/app/store/hooks'
+import React, { FC, ReactNode, useEffect } from 'react';
+import { Portal } from './portal-modal';
+import { PortalTypeEnum } from './types';
+import { closeModal } from '@/app/store/slices/modal-slice/slice';
+import { selectOpenedModal } from '@/app/store/slices/modal-slice/selectors';
+import { useAppDispatch, useAppSelector } from '@/app/store/hooks';
 
 interface ModalContainerProps {
-  bgColor?: string
-  opacity?: number
-  padding?: string
-  type?: PortalTypeEnum
-  zIndex?: number
-  isFullScreen?: boolean
-  children: ReactNode
-  name?: string
+  bgColor?: string;
+  opacity?: number;
+  padding?: string;
+  type?: PortalTypeEnum;
+  zIndex?: number;
+  isFullScreen?: boolean;
+  children: ReactNode;
+  name?: string;
 }
 
 export const ModalContainer: FC<ModalContainerProps> = (props) => {
@@ -28,10 +28,10 @@ export const ModalContainer: FC<ModalContainerProps> = (props) => {
     type = PortalTypeEnum.MODAL,
     name,
     isFullScreen = true
-  } = props
+  } = props;
 
-  const openedModal = useAppSelector(selectOpenedModal)
-  const dispatch = useAppDispatch()
+  const openedModal = useAppSelector(selectOpenedModal);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -40,14 +40,14 @@ export const ModalContainer: FC<ModalContainerProps> = (props) => {
         type === PortalTypeEnum.MODAL &&
         name === openedModal
       ) {
-        dispatch(closeModal())
+        dispatch(closeModal());
       }
-    }
-    document.addEventListener('keydown', handleKeyDown)
+    };
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [type, name, openedModal, dispatch])
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [type, name, openedModal, dispatch]);
 
   if (type === PortalTypeEnum.MODAL) {
     return name === openedModal ? (
@@ -60,12 +60,12 @@ export const ModalContainer: FC<ModalContainerProps> = (props) => {
       >
         {children}
       </Portal>
-    ) : null
+    ) : null;
   }
   // context menu mode
   return (
     <Portal type={PortalTypeEnum.CONTEXT} zIndex={zIndex ?? 0}>
       {children}
     </Portal>
-  )
-}
+  );
+};

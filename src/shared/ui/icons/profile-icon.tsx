@@ -1,10 +1,10 @@
-import type { FC } from 'react'
-import { SvgBase } from './svg-base'
+import type { FC } from 'react';
+import { SvgBase } from './svg-base';
 
 interface ProfileIconProps {
-  className?: string
-  width?: number | string
-  height?: number | string
+  className?: string;
+  width?: number | string;
+  height?: number | string;
 }
 
 export const ProfileIcon: FC<ProfileIconProps> = ({
@@ -27,5 +27,5 @@ export const ProfileIcon: FC<ProfileIconProps> = ({
         </g>
       </g>
     </SvgBase>
-  )
-}
+  );
+};

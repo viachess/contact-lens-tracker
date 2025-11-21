@@ -1,5 +1,5 @@
-import { LoginForm } from '@/features/auth/ui/login-form'
-import { Link } from 'react-router-dom'
+import { LoginForm } from '@/features/auth/ui/login-form';
+import { Link } from 'react-router-dom';
 
 export const LoginPage = () => {
   return (
@@ -13,5 +13,5 @@ export const LoginPage = () => {
         </Link>
       </div>
     </div>
-  )
-}
+  );
+};

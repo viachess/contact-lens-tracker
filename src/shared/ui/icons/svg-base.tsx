@@ -1,14 +1,14 @@
-import React from 'react'
+import React from 'react';
 
 interface SvgBaseProps {
-  children: React.ReactNode
-  className?: string
-  width?: number | string
-  height?: number | string
-  viewBox?: string
-  fill?: string
-  stroke?: string
-  strokeWidth?: number
+  children: React.ReactNode;
+  className?: string;
+  width?: number | string;
+  height?: number | string;
+  viewBox?: string;
+  fill?: string;
+  stroke?: string;
+  strokeWidth?: number;
 }
 
 export const SvgBase: React.FC<SvgBaseProps> = ({
@@ -34,5 +34,5 @@ export const SvgBase: React.FC<SvgBaseProps> = ({
     >
       {children}
     </svg>
-  )
-}
+  );
+};
