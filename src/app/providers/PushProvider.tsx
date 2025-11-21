@@ -46,11 +46,10 @@ async function subscribeToPush(): Promise<void> {
     if (!res.ok) {
       // Surface server error in console to aid debugging
       const txt = await res.text().catch(() => '');
-      // eslint-disable-next-line no-console
+
       console.error('[push] subscribe failed', res.status, txt);
     }
   } catch (e) {
-    // eslint-disable-next-line no-console
     console.error('[push] subscribe network error', e);
   }
 }

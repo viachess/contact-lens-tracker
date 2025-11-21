@@ -14,7 +14,7 @@ import { vi, describe, test, beforeEach, afterEach, expect } from 'vitest';
 import * as supabaseClient from '@/shared/lib/supabase-client';
 
 // Logging helpers (single place where console is used)
-/* eslint-disable no-console */
+
 const stepLog = (message: string, details?: unknown) => {
   if (details !== undefined) console.info(`[step] ${message}`, details);
   else console.info(`[step] ${message}`);
@@ -22,7 +22,6 @@ const stepLog = (message: string, details?: unknown) => {
 const assertLog = (name: string, value: unknown) => {
   console.info(`[assert] ${name}:`, value);
 };
-/* eslint-enable no-console */
 
 // In-memory Supabase mock for 'lenses'
 type LensRow = Record<string, any>;

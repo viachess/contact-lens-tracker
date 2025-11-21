@@ -14,16 +14,18 @@ const initialState: AuthState = {
   error: null
 };
 
+const handleAuthPending = (state: AuthState) => {
+  state.status = 'authenticating';
+  state.error = null;
+};
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(initSession.pending, (state) => {
-        state.status = 'authenticating';
-        state.error = null;
-      })
+      .addCase(initSession.pending, handleAuthPending)
       .addCase(initSession.fulfilled, (state, action) => {
         state.user = action.payload;
         state.status = action.payload ? 'authenticated' : 'idle';
@@ -35,10 +37,7 @@ const authSlice = createSlice({
           action.error.message ||
           'Failed to init session';
       })
-      .addCase(loginWithEmail.pending, (state) => {
-        state.status = 'authenticating';
-        state.error = null;
-      })
+      .addCase(loginWithEmail.pending, handleAuthPending)
       .addCase(loginWithEmail.fulfilled, (state, action) => {
         state.user = action.payload;
         state.status = action.payload ? 'authenticated' : 'idle';
@@ -48,10 +47,7 @@ const authSlice = createSlice({
         state.error =
           (action.payload as string) || action.error.message || 'Login failed';
       })
-      .addCase(signupWithEmail.pending, (state) => {
-        state.status = 'authenticating';
-        state.error = null;
-      })
+      .addCase(signupWithEmail.pending, handleAuthPending)
       .addCase(signupWithEmail.fulfilled, (state, action) => {
         state.user = action.payload;
         state.status = action.payload ? 'authenticated' : 'idle';
